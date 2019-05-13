@@ -32,6 +32,7 @@ class Shipwrecked extends Phaser.Scene {
         this.playerLife = 10;
         this.gameOver = false;
         this.score = 0;
+
     } // end constructor
 
     /*
@@ -47,7 +48,7 @@ scoreText = "";
 
 
     preload() {
-        
+
         this.load.image("sand", "assets/island_sand_d16.jpg");
         this.load.image("ocean", "assets/ocean16.jpg");
         this.load.image("boar", "assets/lava_s16.jpg");
@@ -56,10 +57,10 @@ scoreText = "";
         //game.kineticScrolling = game.plugins.add(Phaser.Plugin.KineticScrolling);
     }
 
-// NOTE:  Our dude sprite sheet is 0 - 12 sprites wide over all. so
-//        that means row 1 is 0 -12 for a total of 13 POSSIBLE slots.
-//        However, we only have 7 in row 1 so slots 7-12 are empty.
-//        row 2 starts on slot 13, etc. 
+    // NOTE:  Our dude sprite sheet is 0 - 12 sprites wide over all. so
+    //        that means row 1 is 0 -12 for a total of 13 POSSIBLE slots.
+    //        However, we only have 7 in row 1 so slots 7-12 are empty.
+    //        row 2 starts on slot 13, etc. 
 
     create() {
         //this.score = 0;
@@ -207,7 +208,24 @@ scoreText = "";
         this.physics.add.overlap(this.player, this.boars, this.boarPlayerCombat, null, this);
 
         //this.physics.add.collider(this.player, this.bombs, this.hitBomb, null, this);
-    }
+
+        //Adds text
+        // this.scoreText = this.addtext(16,16, "score 0"{fontsize :32px, fill: #000});
+        // this.scoreText.setText("score:" + this.score);
+
+        this.goldText = this.add.text(160, 160, "score 0", { fontsize: "32px", fill: "#000", align: "center" });
+        this.goldText.setScrollFactor(0);
+        //this.goldText.fixedToCamera = true;
+        //this.goldText.cameraOffset.setTo(160, 160);
+        //game.debug.cameraInfo(game.camera, 32, 32);
+        // only for test..
+        // this.gold = 1;
+        // this.wood = 2;
+        // this.rope = 3;
+        // this.sails = 4;
+        // this.food = 5;
+        // this.score = 6;
+    }//end create
 
     update() {
         if (this.gameOver) {
@@ -228,7 +246,7 @@ scoreText = "";
         else if (this.cursors.down.isDown) {
             this.player.setVelocityY(100);
             this.player.anims.play("front", true);
-        }else {
+        } else {
             this.player.setVelocityX(0);
             this.player.setVelocityY(0);
             this.player.anims.play("turn");
@@ -241,7 +259,7 @@ scoreText = "";
         this.cameras.main.scrollX = this.player.x - 400;
         this.cameras.main.scrollY = this.player.y - 300;
 
-     }// end update
+    }// end update
 
     /*
         collectStar(player, star) {
