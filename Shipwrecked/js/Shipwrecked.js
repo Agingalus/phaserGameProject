@@ -217,6 +217,7 @@ scoreText = "";
                 // this.scoreText = this.addtext(16,16, "score 0"{fontsize :32px, fill: #000});
                 // this.scoreText.setText("score:" + this.score);
 
+                // adds header
                 this.goldText = this.add.text(20, 10, "Gold: 0", { fontsize: "32px", fill: "#000", align: "center" });
                 this.goldText.setScrollFactor(0);
 
@@ -230,17 +231,7 @@ scoreText = "";
                 this.foodText.setScrollFactor(0);
 
 
-                // this.healthbar = this.add.sprite(500, 50, "heart");
-                // this.healthbar.cropEnabled = true;
-                // this.healthbar.setCrop(0, 0, 400, 600);
-
-                // this.anims.create({
-                //     key: "halfHealth",
-                //     frames: this.anims.generateFrameNumbers("heart", { start: 0, end: 1 }),
-                //     //frameWidth: 85, frameHeight: 50
-                //     // frames: [{ key: "heart", frame: 85 }],
-                //     frameRate: 16
-                // });
+                //adds 2 hearts to display
                 this.playerLifeImg = this.add.image(500, 50, "heart2")
 
             } //end create
