@@ -120,7 +120,7 @@ class Shipwrecked4 extends Phaser.Scene {
                 } // end for i
 
                 this.add.image(900, 500, "ocean7");
-                this.add.image(500, 900, "ocean4");
+                this.add.image(500, 980, "ocean8");
                 console.log("out of ocean 4 creation");
 
 
