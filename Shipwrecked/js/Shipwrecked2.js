@@ -33,6 +33,8 @@ class Shipwrecked2 extends Phaser.Scene {
                 this.load.image("hcTree", "assets/horse-chestnut-tree_16.png");
                 this.load.image("boar", "assets/boarhit.png");
                 this.load.spritesheet("dude", "assets/universal-lpc-sprite_male_01_32pix.png", { frameWidth: 32, frameHeight: 32 });
+                this.load.image("ocean3", "assets/ocean3.png");
+                this.load.image("ocean4", "assets/ocean4.png")
 
 
                 // status icons will be on top of anything else.
@@ -115,6 +117,11 @@ class Shipwrecked2 extends Phaser.Scene {
                         this.BigOcean.create(i, j, "ocean");
                     } // end for j
                 } // end for i
+
+
+                this.add.image(500, 65, "ocean3");
+                this.add.image(75, 500, "ocean4");
+
 
                 console.log("out of ocean 2 creation");
 

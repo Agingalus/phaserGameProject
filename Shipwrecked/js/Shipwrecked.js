@@ -29,6 +29,8 @@ class Shipwrecked extends Phaser.Scene {
         preload() {
                 this.load.image("bigSand", "assets/island_sand_d.jpg");
                 this.load.image("ocean", "assets/ocean16.jpg");
+                this.load.image("portLake", "assets/portLake.png");
+                this.load.image("ocean2", "assets/ocean2.png");
                 this.load.image("jungle", "assets/jungle_mntn2_d16.jpg");
                 this.load.image("hcTree", "assets/horse-chestnut-tree_16.png");
                 this.load.image("boar", "assets/boarhit.png");
@@ -98,6 +100,7 @@ class Shipwrecked extends Phaser.Scene {
                 this.add.image(500, 500, "bigSand");
 
 
+
                 //  add ocean as a static but we will set it up as a collider later.
                 this.BigOcean = this.physics.add.staticGroup();
                 // just a couple tiles wide down the left for now.
@@ -114,6 +117,7 @@ class Shipwrecked extends Phaser.Scene {
                         this.BigOcean.create(i, j, "ocean");
                     } // end for j
                 } // end for i
+
 
                 // **********************************************************************************
                 // NOTE: this method sucks.  would be better to custom up some images of the bay then drop them in as an object.
@@ -148,6 +152,11 @@ class Shipwrecked extends Phaser.Scene {
                     }
                     xMax -= 1;
                 }
+
+                //ocean cut out
+                this.add.image(150, 500, "portLake");
+                this.add.image(500, 950, "ocean2");
+
 
                 console.log("out of ocean creation");
 
@@ -235,7 +244,7 @@ class Shipwrecked extends Phaser.Scene {
                 //this.scoreText = this.add.text(16, 16, myItem, { fontSize: "32px", fill: "#000" });
 
                 // adds header
-                this.goldText = this.add.text(20, 10, "Gold: 0", { fontsize: "32px", fill: "#000", align: "center" });
+                this.goldText = this.add.text(20, 10, "Gold: " + this.gold, { fontsize: "32px", fill: "#000", align: "center" });
                 this.goldText.setScrollFactor(0);
 
                 this.woodText = this.add.text(100, 10, "Wood: 0", { fontsize: "32px", fill: "#000", align: "center" });
@@ -443,6 +452,8 @@ class Shipwrecked extends Phaser.Scene {
         boarPlayerCombat(thePlayer, boar) {
                 playerLife -= 5;
                 boar.disableBody(true, true);
+                this.gold++;
+                this.goldText.setText("Gold: " + this.gold);
 
                 if (playerLife <= 0) {
 
@@ -454,6 +465,7 @@ class Shipwrecked extends Phaser.Scene {
 
                     // force facing
                     thePlayer.anims.play("turn");
+
 
                     this.playerLifeImg.setTexture("noHealth");
                     this.gameOver = true;
