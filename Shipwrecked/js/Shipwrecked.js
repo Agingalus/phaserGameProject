@@ -39,7 +39,10 @@ class Shipwrecked extends Phaser.Scene {
                 this.load.image("hcTree", "assets/horse-chestnut-tree_16.png");
                 this.load.image("boar", "assets/boarhit.png");
                 this.load.spritesheet("dude", "assets/universal-lpc-sprite_male_01_32pix.png", { frameWidth: 32, frameHeight: 32 });
-
+                this.load.image("portLake1", "assets/portLake1.png");
+                this.load.image("portLake2", "assets/portLake2.png");
+                this.load.image("portLake3", "assets/portLake3.png");
+                this.load.image("portLake4", "assets/portLake4.png");
 
                 // status icons will be on top of anything else.
                 this.load.image("heart2", "assets/heartshealth2.png");
@@ -108,7 +111,9 @@ class Shipwrecked extends Phaser.Scene {
                 //  add ocean as a static but we will set it up as a collider later.
                 this.BigOcean = this.physics.add.staticGroup();
                 this.BigOcean.create(500, 970, "ocean2");
-                this.BigOcean.create(125, 500, "portLake");
+                //this.BigOcean.create(125, 500, "portLake");
+                this.BigOcean.create(125, 500, "portLake1");
+                this.BigOcean.create(220, 500, "portLake2")
 
                 // just a couple tiles wide down the left for now.
 
