@@ -11,7 +11,7 @@ class Shipwrecked extends Phaser.Scene {
                 this.food = 0;
                 this.gameOver = false;
                 this.score = 0;
-                this.startX = 240;
+                this.startX = 540;
                 this.startY = 400;
             } // end constructor
 
@@ -41,6 +41,11 @@ class Shipwrecked extends Phaser.Scene {
                 this.load.image("heart2", "assets/heartshealth2.png");
                 this.load.image("heart1", "assets/heartshealth1.png");
                 this.load.image("noHealth", "assets/noHealth.png");
+
+
+
+                //this.load.atlas('sheet', 'assets/portLake.png', 'assets/lakeShape.json');
+                //this.load.json("shapes", "assets/lakeShape.json")
             } // end preload
 
 
@@ -102,61 +107,78 @@ class Shipwrecked extends Phaser.Scene {
 
 
                 //  add ocean as a static but we will set it up as a collider later.
-                this.BigOcean = this.physics.add.staticGroup();
-                // just a couple tiles wide down the left for now.
-                for (i = 0; i < 65; i += 16) {
-                    console.log("in first i loop for ocean");
-                    for (j = 0; j < 1000; j += 16) {
-                        this.BigOcean.create(i, j, "ocean");
-                    } // end for j
-                } // end for i
 
-                for (i = 1000; i > 0; i -= 16) {
-                    console.log("in second i loop for ocean");
-                    for (j = 1000; j > 935; j -= 16) {
-                        this.BigOcean.create(i, j, "ocean");
-                    } // end for j
-                } // end for i
+                // just a couple tiles wide down the left for now.
+                // for (i = 0; i < 65; i += 16) {
+                //     console.log("in first i loop for ocean");
+                //     for (j = 0; j < 1000; j += 16) {
+                //         this.BigOcean.create(i, j, "ocean");
+                //     } // end for j
+                // } // end for i
+
+                // for (i = 1000; i > 0; i -= 16) {
+                //     console.log("in second i loop for ocean");
+                //     for (j = 1000; j > 935; j -= 16) {
+                //         this.BigOcean.create(i, j, "ocean");
+                //     } // end for j
+                // } // end for i
 
 
                 // **********************************************************************************
                 // NOTE: this method sucks.  would be better to custom up some images of the bay then drop them in as an object.
                 // ***********************************************************************************
-                // create a bay
-                let bayX = 80;
-                let bayY = 300;
-                let xMax = 0;
-                // do top halve..
-                for (bayY = 320; bayY <= 480; bayY += 16) {
-                    for (bayX = 80; bayX < (80 + (xMax * 16)); bayX += 16) {
-                        this.BigOcean.create(bayX, bayY, "ocean");
+                // // create a bay
+                // let bayX = 80;
+                // let bayY = 300;
+                // let xMax = 0;
+                // // do top halve..
+                // for (bayY = 320; bayY <= 480; bayY += 16) {
+                //     for (bayX = 80; bayX < (80 + (xMax * 16)); bayX += 16) {
+                //         this.BigOcean.create(bayX, bayY, "ocean");
 
-                    }
-                    xMax += 1;
-                }
+                //     }
+                //     xMax += 1;
+                // }
 
-                // do middle:
-                for (bayY = 496; bayY <= 560; bayY += 16) {
-                    for (bayX = 80; bayX < (80 + (xMax * 16)); bayX += 16) {
-                        this.BigOcean.create(bayX, bayY, "ocean");
-                    }
+                // // do middle:
+                // for (bayY = 496; bayY <= 560; bayY += 16) {
+                //     for (bayX = 80; bayX < (80 + (xMax * 16)); bayX += 16) {
+                //         this.BigOcean.create(bayX, bayY, "ocean");
+                //     }
 
-                }
+                // }
 
 
-                // do bottom halve
-                xMax -= 1;
-                for (bayY = 576; bayY <= 736; bayY += 16) {
-                    for (bayX = 80; bayX < (80 + (xMax * 16)); bayX += 16) {
-                        this.BigOcean.create(bayX, bayY, "ocean");
-                    }
-                    xMax -= 1;
-                }
+                // // do bottom halve
+                // xMax -= 1;
+                // for (bayY = 576; bayY <= 736; bayY += 16) {
+                //     for (bayX = 80; bayX < (80 + (xMax * 16)); bayX += 16) {
+                //         this.BigOcean.create(bayX, bayY, "ocean");
+                //     }
+                //     xMax -= 1;
+                // }
 
                 //ocean cut out
-                this.add.image(150, 500, "portLake");
-                this.add.image(500, 950, "ocean2");
+                this.BigOcean = this.physics.add.staticGroup();
+                this.BigOcean.create(150, 500, "portLake");
+                this.BigOcean.create(500, 950, "ocean2");
 
+
+                //this.shapes = this.cache.json.get("shapes");
+                //this.add.image(0, 0, 'sheet');
+                //this.ground = this.matter.add.sprite(150, 500, 'sheet', 'portLake', { shape: shapes.portLak }) //, 'ground', {shape: shapes.ground});
+
+                // this.water1 = this.add.image(150, 500, "portLake");
+                // this.water2 = this.add.image(500, 950, "ocean2");
+                //this.physics.arcade.collide(this.player, water1);
+
+                //this.physics.add.collider(this.player, this.water1);
+
+                // this.water1 = this.physics.add.staticGroup();
+                // this.water2 = this.physics.add.staticGroup();
+
+                // this.water1.create(150, 500, "portLake");
+                // this.water2.create(500, 950, "ocean2");
 
                 console.log("out of ocean creation");
 
@@ -267,6 +289,8 @@ class Shipwrecked extends Phaser.Scene {
                 //  Collide the player and the boars with the ocean
                 this.physics.add.collider(this.player, this.BigOcean);
                 this.physics.add.collider(this.boars, this.BigOcean);
+                //this.physics.add.collider(this.player, this.water1);
+                //this.physics.add.collider(this.player, this.water2);
 
                 // collide boars with each other.
                 this.physics.add.collider(this.boars, this.boars);
