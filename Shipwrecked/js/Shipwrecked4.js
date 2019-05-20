@@ -83,18 +83,18 @@ class Shipwrecked4 extends Phaser.Scene {
                 let j = 0;
 
                 /*
-        // add the ground we can walk on (beach etc) as the whole underlying group to start..
-        this.ground = this.physics.add.staticGroup();
+    // add the ground we can walk on (beach etc) as the whole underlying group to start..
+    this.ground = this.physics.add.staticGroup();
 
-        //  A sand everywhere.
-        let i = 0;
-        let j = 0;
-        for (i = 0; i < 1000; i += 16) {
-            console.log("in first i loop for sand");
-            for (j = 0; j < 1000; j += 16) {
-                this.ground.create(i, j, "sand");
-            }// end for j
-        }// end for i
+    //  A sand everywhere.
+    let i = 0;
+    let j = 0;
+    for (i = 0; i < 1000; i += 16) {
+        console.log("in first i loop for sand");
+        for (j = 0; j < 1000; j += 16) {
+            this.ground.create(i, j, "sand");
+        }// end for j
+    }// end for i
 */
 
                 // to only add an image someplace, you would say:
@@ -102,25 +102,25 @@ class Shipwrecked4 extends Phaser.Scene {
 
 
                 ////  add ocean as a static but we will set it up as a collider later.
+
+                // // just a couple tiles wide down the right and bottom for now.
+                // for (i = 1000; i > 919; i -= 16) {
+                //     console.log("in first i loop for ocean");
+                //     for (j = 0; j < 1000; j += 16) {
+                //         this.BigOcean.create(i, j, "ocean");
+                //     } // end for j
+                // } // end for i
+
+                // // bottom
+                // for (i = 1000; i > 0; i -= 16) {
+                //     console.log("in second i loop for ocean");
+                //     for (j = 1000; j > 935; j -= 16) {
+                //         this.BigOcean.create(i, j, "ocean");
+                //     } // end for j
+                // } // end for i
                 this.BigOcean = this.physics.add.staticGroup();
-                // just a couple tiles wide down the right and bottom for now.
-                for (i = 1000; i > 919; i -= 16) {
-                    console.log("in first i loop for ocean");
-                    for (j = 0; j < 1000; j += 16) {
-                        this.BigOcean.create(i, j, "ocean");
-                    } // end for j
-                } // end for i
-
-                // bottom
-                for (i = 1000; i > 0; i -= 16) {
-                    console.log("in second i loop for ocean");
-                    for (j = 1000; j > 935; j -= 16) {
-                        this.BigOcean.create(i, j, "ocean");
-                    } // end for j
-                } // end for i
-
-                this.add.image(900, 500, "ocean7");
-                this.add.image(500, 980, "ocean8");
+                this.BigOcean.create(940, 500, "ocean7");
+                this.BigOcean.create(500, 980, "ocean8");
                 console.log("out of ocean 4 creation");
 
 

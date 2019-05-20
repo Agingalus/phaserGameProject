@@ -11,7 +11,7 @@ class Shipwrecked extends Phaser.Scene {
                 this.food = 0;
                 this.gameOver = false;
                 this.score = 0;
-                this.startX = 540;
+                this.startX = 500;
                 this.startY = 400;
                 this.boarRunTime = 0;
                 this.maxBoarRun = 150;
@@ -31,7 +31,7 @@ class Shipwrecked extends Phaser.Scene {
         preload() {
                 this.load.image("bigSand", "assets/island_sand_d.jpg");
                 this.load.image("ocean", "assets/ocean16.jpg");
-                this.load.image("portLake", "assets/portLake.png");
+                this.load.image("ocean1", "assets/ocean4.png");
                 this.load.image("ocean2", "assets/ocean2.png");
                 this.load.image("greenGround", "assets/greenGround.png");
                 this.load.image("jungleTrees", "assets/JungleOK64.png");
@@ -39,10 +39,7 @@ class Shipwrecked extends Phaser.Scene {
                 this.load.image("hcTree", "assets/horse-chestnut-tree_16.png");
                 this.load.image("boar", "assets/boarhit.png");
                 this.load.spritesheet("dude", "assets/universal-lpc-sprite_male_01_32pix.png", { frameWidth: 32, frameHeight: 32 });
-                this.load.image("portLake1", "assets/portLake1.png");
-                this.load.image("portLake2", "assets/portLake2.png");
-                this.load.image("portLake3", "assets/portLake3.png");
-                this.load.image("portLake4", "assets/portLake4.png");
+
 
                 // status icons will be on top of anything else.
                 this.load.image("heart2", "assets/heartshealth2.png");
@@ -111,9 +108,8 @@ class Shipwrecked extends Phaser.Scene {
                 //  add ocean as a static but we will set it up as a collider later.
                 this.BigOcean = this.physics.add.staticGroup();
                 this.BigOcean.create(500, 970, "ocean2");
-                //this.BigOcean.create(125, 500, "portLake");
-                this.BigOcean.create(125, 500, "portLake1");
-                this.BigOcean.create(220, 500, "portLake2")
+                this.BigOcean.create(70, 500, "ocean1");
+
 
                 // just a couple tiles wide down the left for now.
 

@@ -119,8 +119,10 @@ class Shipwrecked2 extends Phaser.Scene {
                 } // end for i
 
 
-                this.add.image(500, 65, "ocean3");
-                this.add.image(75, 500, "ocean4");
+
+                this.BigOcean = this.physics.add.staticGroup();
+                this.BigOcean.create(570, 65, "ocean3");
+                this.BigOcean.create(75, 500, "ocean4");
 
 
                 console.log("out of ocean 2 creation");
