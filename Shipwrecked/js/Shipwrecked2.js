@@ -175,13 +175,19 @@ class Shipwrecked2 extends Phaser.Scene {
 
 
 
-                this.diologBox = this.sys.dialogModal.init();
-                //this.diologBox.setScrollFactor(500, 500);
+                // this.diologBox = this.add.text(this.sys.dialogModal.init());
+                // //this.diologBox.setScrollFactor(500, 500);
+                // this.diologBox.setScrollFactor(0);
+
+                //this.diologBox = this.add.sprite(500, 500, "dude");
+                this.diologBox = this.add.text(200, 200, this.sys.dialogModal.init())
 
 
+                this.diologBox.setScrollFactor(0);
+                //this.diologBox.fixedToCamera = true;
 
-                this.sys.dialogModal.setText('Testing this.');
-                this.sys.dialogModal.setText('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.blaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa hhhhhhhhhhh', true);
+                //this.sys.dialogModal.setText('Testing this.');
+                // this.sys.dialogModal.setText('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.blaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa hhhhhhhhhhh', true);
 
             } // end create
 
@@ -239,6 +245,7 @@ class Shipwrecked2 extends Phaser.Scene {
                 //  we want the center of the camera on the player, not the left-hand side of it
                 this.cameras.main.scrollX = this.player.x - 400;
                 this.cameras.main.scrollY = this.player.y - 300;
+
 
 
                 /* ***************************************************
@@ -304,12 +311,7 @@ class Shipwrecked2 extends Phaser.Scene {
 
                     this.playerLifeImg.setTexture("noHealth");
                     this.gameOver = true;
-                    this.diologBox = this.sys.dialogModal.init();
-                    //this.diologBox.setScrollFactor(500, 500);
 
-
-
-                    this.sys.dialogModal.setText('Testing this.');
 
                 } // end if playerLife
 
