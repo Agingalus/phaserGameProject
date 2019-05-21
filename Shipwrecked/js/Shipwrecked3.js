@@ -78,46 +78,12 @@ class Shipwrecked3 extends Phaser.Scene {
                 this.food = 5;
                 this.score = 6;
 
-                // loop variables
-                let i = 0;
-                let j = 0;
-
-                /*
-    // add the ground we can walk on (beach etc) as the whole underlying group to start..
-    this.ground = this.physics.add.staticGroup();
-
-    //  A sand everywhere.
-    let i = 0;
-    let j = 0;
-    for (i = 0; i < 1000; i += 16) {
-        console.log("in first i loop for sand");
-        for (j = 0; j < 1000; j += 16) {
-            this.ground.create(i, j, "sand");
-        }// end for j
-    }// end for i
-*/
 
                 // to only add an image someplace, you would say:
                 this.add.image(500, 500, "bigSand");
 
 
-                //  add ocean as a static but we will set it up as a collider later.
-                // this.BigOcean = this.physics.add.staticGroup();
-                // // just a couple tiles wide down the right and accross the top for now.
-                // for (i = 935; i < 1000; i += 16) {
-                //     console.log("in first i loop for 3rd ocean");
-                //     for (j = 0; j < 1000; j += 16) {
-                //         this.BigOcean.create(i, j, "ocean");
-                //     } // end for j
-                // } // end for i
 
-                // // top
-                // for (i = 0; i < 1000; i += 16) {
-                //     console.log("in second i loop for 3rd ocean");
-                //     for (j = 0; j < 65; j += 16) {
-                //         this.BigOcean.create(i, j, "ocean");
-                //     } // end for j
-                // } // end for i
 
                 // this.add.image(915, 500, "ocean5");
                 // this.add.image(500, 55, "ocean6");

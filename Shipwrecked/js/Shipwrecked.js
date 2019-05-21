@@ -82,24 +82,7 @@ class Shipwrecked extends Phaser.Scene {
                 this.food = 5;
                 this.score = 6;
 
-                // loop variables
-                let i = 0;
-                let j = 0;
 
-                /*
-        // add the ground we can walk on (beach etc) as the whole underlying group to start..
-        this.ground = this.physics.add.staticGroup();
-
-        //  A sand everywhere.
-        let i = 0;
-        let j = 0;
-        for (i = 0; i < 1000; i += 16) {
-            console.log("in first i loop for sand");
-            for (j = 0; j < 1000; j += 16) {
-                this.ground.create(i, j, "sand");
-            }// end for j
-        }// end for i
-*/
 
                 // to only add an image someplace, you would say:
                 this.add.image(500, 500, "bigSand");
@@ -113,55 +96,44 @@ class Shipwrecked extends Phaser.Scene {
 
                 // just a couple tiles wide down the left for now.
 
-                /*
-        for (i = 0; i < 65; i += 16) {
-            console.log("in first i loop for ocean");
-            for (j = 0; j < 1000; j += 16) {
-                this.BigOcean.create(i, j, "ocean");
-            }// end for j
-        }// end for i
-
-        for (i = 1000; i > 0; i -= 16) {
-            console.log("in second i loop for ocean");
-            for (j = 1000; j > 935; j -= 16) {
-                this.BigOcean.create(i, j, "ocean");
-            }// end for j
-        }// end for i
-        
-        // **********************************************************************************
-        // NOTE: this method sucks.  would be better to custom up some images of the bay then drop them in as an object.
-        // ***********************************************************************************
-        // create a bay
-        let bayX = 80;
-        let bayY = 300;
-        let xMax = 0;
-        // do top halve..
-        for (bayY = 320; bayY <= 480; bayY += 16) {
-            for (bayX = 80; bayX < (80 + (xMax * 16)); bayX += 16) {
-                this.BigOcean.create(bayX, bayY, "ocean");
-
-            }
-            xMax += 1;
-        }
-
-        // do middle:
-        for (bayY = 496; bayY <= 560; bayY += 16) {
-            for (bayX = 80; bayX < (80 + (xMax * 16)); bayX += 16) {
-                this.BigOcean.create(bayX, bayY, "ocean");
-            }
-
-        }
 
 
-        // do bottom halve
-        xMax -= 1;
-        for (bayY = 576; bayY <= 736; bayY += 16) {
-            for (bayX = 80; bayX < (80 + (xMax * 16)); bayX += 16) {
-                this.BigOcean.create(bayX, bayY, "ocean");
-            }
-            xMax -= 1;
-        }
-*/
+                // **********************************************************************************
+                // NOTE: this method sucks.  would be better to custom up some images of the bay then drop them in as an object.
+                // ***********************************************************************************
+                // create a bay
+                let i = 0;
+                let j = 0;
+                let bayX = 80;
+                let bayY = 300;
+                let xMax = 0;
+                // do top halve..
+                for (bayY = 320; bayY <= 480; bayY += 16) {
+                    for (bayX = 80; bayX < (80 + (xMax * 16)); bayX += 16) {
+                        this.BigOcean.create(bayX, bayY, "ocean");
+
+                    }
+                    xMax += 1;
+                }
+
+                // do middle:
+                for (bayY = 496; bayY <= 560; bayY += 16) {
+                    for (bayX = 80; bayX < (80 + (xMax * 16)); bayX += 16) {
+                        this.BigOcean.create(bayX, bayY, "ocean");
+                    }
+
+                }
+
+
+                // do bottom halve
+                xMax -= 1;
+                for (bayY = 576; bayY <= 736; bayY += 16) {
+                    for (bayX = 80; bayX < (80 + (xMax * 16)); bayX += 16) {
+                        this.BigOcean.create(bayX, bayY, "ocean");
+                    }
+                    xMax -= 1;
+                }
+
                 console.log("out of ocean 1 creation");
 
                 /* *********************************************************************
