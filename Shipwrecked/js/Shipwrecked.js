@@ -4,11 +4,6 @@ class Shipwrecked extends Phaser.Scene {
         constructor() {
                 super({ key: "Shipwrecked" });
 
-                this.gold = 0;
-                this.wood = 0;
-                this.rope = 0;
-                this.sails = 0;
-                this.food = 0;
                 this.gameOver = false;
                 this.score = 0;
                 this.startX = 500;
@@ -30,18 +25,19 @@ class Shipwrecked extends Phaser.Scene {
         // -----------------------------------------------------------
         preload() {
                 this.load.image("bigSand", "assets/island_sand_d.jpg");
-                this.load.image("ocean", "assets/ocean16.jpg");
                 this.load.image("ocean1", "assets/ocean4.png");
                 this.load.image("ocean2", "assets/ocean2.png");
                 this.load.image("greenGround", "assets/greenGround.png");
-                this.load.image("jungleTrees", "assets/JungleOK64.png");
-                this.load.image("jungle", "assets/jungle_mntn2_d16.jpg");
+                this.load.image("jungleTrees", "assets/JungleOk64.png");
+                this.load.image("macheteImg", "assets/machete64A.png");
                 this.load.image("hcTree", "assets/horse-chestnut-tree_16.png");
                 this.load.image("boar", "assets/boarhit.png");
                 this.load.spritesheet("dude", "assets/universal-lpc-sprite_male_01_32pix.png", { frameWidth: 32, frameHeight: 32 });
 
 
                 // status icons will be on top of anything else.
+                this.load.image("singleHeart", "assets/singleHeart16.png");
+                this.load.image("blankHeart", "assets/blankHeart16.png");
                 this.load.image("heart2", "assets/heartshealth2.png");
                 this.load.image("heart1", "assets/heartshealth1.png");
                 this.load.image("noHealth", "assets/noHealth.png");
@@ -75,14 +71,25 @@ class Shipwrecked extends Phaser.Scene {
 
 
                 // only for test..
-                this.gold = 1;
-                this.wood = 2;
-                this.rope = 3;
-                this.sails = 4;
-                this.food = 5;
                 this.score = 6;
 
+                // loop variables
+                let i = 0;
+                let j = 0;
 
+                /*
+// add the ground we can walk on (beach etc) as the whole underlying group to start..
+this.ground = this.physics.add.staticGroup();
+//  A sand everywhere.
+let i = 0;
+let j = 0;
+for (i = 0; i < 1000; i += 16) {
+    console.log("in first i loop for sand");
+    for (j = 0; j < 1000; j += 16) {
+        this.ground.create(i, j, "sand");
+    }// end for j
+}// end for i
+*/
 
                 // to only add an image someplace, you would say:
                 this.add.image(500, 500, "bigSand");
@@ -94,45 +101,6 @@ class Shipwrecked extends Phaser.Scene {
                 this.BigOcean.create(70, 500, "ocean1");
 
 
-                // just a couple tiles wide down the left for now.
-
-
-
-                // **********************************************************************************
-                // NOTE: this method sucks.  would be better to custom up some images of the bay then drop them in as an object.
-                // ***********************************************************************************
-                // create a bay
-                let i = 0;
-                let j = 0;
-                let bayX = 80;
-                let bayY = 300;
-                let xMax = 0;
-                // do top halve..
-                for (bayY = 320; bayY <= 480; bayY += 16) {
-                    for (bayX = 80; bayX < (80 + (xMax * 16)); bayX += 16) {
-                        this.BigOcean.create(bayX, bayY, "ocean");
-
-                    }
-                    xMax += 1;
-                }
-
-                // do middle:
-                for (bayY = 496; bayY <= 560; bayY += 16) {
-                    for (bayX = 80; bayX < (80 + (xMax * 16)); bayX += 16) {
-                        this.BigOcean.create(bayX, bayY, "ocean");
-                    }
-
-                }
-
-
-                // do bottom halve
-                xMax -= 1;
-                for (bayY = 576; bayY <= 736; bayY += 16) {
-                    for (bayX = 80; bayX < (80 + (xMax * 16)); bayX += 16) {
-                        this.BigOcean.create(bayX, bayY, "ocean");
-                    }
-                    xMax -= 1;
-                }
 
                 console.log("out of ocean 1 creation");
 
@@ -141,10 +109,14 @@ class Shipwrecked extends Phaser.Scene {
                  * *********************************************************************/
                 this.theJungle = this.physics.add.staticGroup();
 
+                let newChild = "";
+
                 for (i = 250; i < 1016; i += 64) {
                     console.log("in first i loop for jungle line");
                     for (j = 0; j < 75; j += 45) {
-                        this.theJungle.create(i, j, "jungleTrees");
+                        newChild = this.theJungle.create(i, j, "jungleTrees");
+                        newChild.name = "jungle";
+
                     } // end for j
                 } // end for i
 
@@ -161,7 +133,8 @@ class Shipwrecked extends Phaser.Scene {
                     console.log("while top to bay loop");
                     while (tiles <= maxTiles) {
                         console.log("while tiles loop");
-                        this.theJungle.create(i, j, "jungleTrees");
+                        newChild = this.theJungle.create(i, j, "jungleTrees");
+                        newChild.name = "jungle";
                         i += 64;
                         tiles += 1;
                     } // end while tiles
@@ -187,7 +160,8 @@ class Shipwrecked extends Phaser.Scene {
                     console.log("while top to bay loop");
                     while (tiles <= maxTiles) {
                         console.log("while tiles loop");
-                        this.theJungle.create(i, j, "jungleTrees");
+                        newChild = this.theJungle.create(i, j, "jungleTrees");
+                        newChild.name = "jungle";
                         i += 64;
                         tiles += 1;
                     } // end while tiles
@@ -212,7 +186,8 @@ class Shipwrecked extends Phaser.Scene {
                     console.log("while JRows loop");
                     while (tiles <= maxTiles) {
                         console.log("while tiles loop");
-                        this.theJungle.create(i, j, "jungleTrees");
+                        newChild = this.theJungle.create(i, j, "jungleTrees");
+                        newChild.name = "jungle";
                         i += 64;
                         tiles += 1;
                     } // end while tiles
@@ -237,7 +212,8 @@ class Shipwrecked extends Phaser.Scene {
                     console.log("while JRows loop");
                     while (tiles <= maxTiles) {
                         console.log("while tiles loop");
-                        this.theJungle.create(i, j, "jungleTrees");
+                        newChild = this.theJungle.create(i, j, "jungleTrees");
+                        newChild.name = "jungle";
                         i += 64;
                         tiles += 1;
                     } // end while tiles
@@ -262,7 +238,8 @@ class Shipwrecked extends Phaser.Scene {
                     console.log("while JRows loop");
                     while (tiles <= maxTiles) {
                         console.log("while tiles loop");
-                        this.theJungle.create(i, j, "jungleTrees");
+                        newChild = this.theJungle.create(i, j, "jungleTrees");
+                        newChild.name = "jungle";
                         i += 64;
                         tiles += 1;
                     } // end while tiles
@@ -291,7 +268,8 @@ class Shipwrecked extends Phaser.Scene {
                     console.log("while JRows loop");
                     while (tiles <= maxTiles) {
                         console.log("while tiles loop");
-                        this.theJungle.create(i, j, "jungleTrees");
+                        newChild = this.theJungle.create(i, j, "jungleTrees");
+                        newChild.name = "jungle";
                         i += 64;
                         tiles += 1;
                     } // end while tiles
@@ -302,6 +280,34 @@ class Shipwrecked extends Phaser.Scene {
                     jRows += 1;
                 } // end while j
 
+                //----------------------------------------------------------------------
+                // set the jungle to be interactive 
+                //
+                // NOTE: can't do onclick handler because we loose the scene version of "this"
+                // so in the handler "this" is the game object and we need to access the player's
+                // location.  We could do it that way if the player was a game global and not
+                // a scene object.
+                //----------------------------------------------------------------------
+                //this.theJungle.children.iterate(this.setJungleInteractions, this);
+                this.theJungle.children.iterate(
+                    function(child) {
+                        child.setInteractive();
+                        //child.name = "jungle";
+                    }
+                    //    child.on('pointerdown', this.jungleClickHandler);
+                    //}, this);
+                );
+
+                this.input.on('gameobjectdown', this.onGameObjectClicked, this);
+
+                /* *********************************************************************
+                 * *********** Add tools etc. ****************************************** 
+                 * *********************************************************************/
+                this.machete = this.physics.add.group({
+                    key: "macheteImg",
+                    repeat: 0,
+                    setXY: { x: 750, y: 650 }
+                });
 
 
                 /* *********************************************************************
@@ -387,21 +393,40 @@ class Shipwrecked extends Phaser.Scene {
                 //this.scoreText = this.add.text(16, 16, myItem, { fontSize: "32px", fill: "#000" });
 
                 // adds header
-                this.goldText = this.add.text(20, 10, "Gold: " + this.gold, { fontsize: "32px", fill: "#000", align: "center" });
+                this.goldText = this.add.text(20, 10, "Gold: " + Gold, { fontsize: "32px", strokeThickness: 1, stroke: "#fe0", fill: "#fe0", shadowStroke: true, shadowFill: true, shadowColor: "#000", shadowOffsetX: 3, shadowOffsetY: 3, align: "center" });
                 this.goldText.setScrollFactor(0);
 
-                this.woodText = this.add.text(100, 10, "Wood: 0", { fontsize: "32px", fill: "#000", align: "center" });
+                this.woodText = this.add.text(100, 10, "Wood: " + Wood, { fontsize: "32px", strokeThickness: 1, stroke: "#fe0", fill: "#fe0", align: "center" });
                 this.woodText.setScrollFactor(0);
 
-                this.ropeText = this.add.text(180, 10, "Rope: 0", { fontsize: "32px", fill: "#000", align: "center" });
+                this.ropeText = this.add.text(180, 10, "Rope: " + Rope, { fontsize: "32px", strokeThickness: 1, stroke: "#fe0", fill: "#fe0", align: "center" });
                 this.ropeText.setScrollFactor(0);
 
-                this.foodText = this.add.text(260, 10, "Food: 0", { fontsize: "32px", fill: "#000", align: "center" });
+                this.woolText = this.add.text(260, 10, "Wool: " + Wool, { fontsize: "32px", strokeThickness: 1, stroke: "#fe0", fill: "#fe0", align: "center" });
+                this.woolText.setScrollFactor(0);
+
+                this.foodText = this.add.text(340, 10, "Food: " + Food, { fontsize: "32px", strokeThickness: 1, stroke: "#fe0", fill: "#fe0", align: "center" });
                 this.foodText.setScrollFactor(0);
 
+                /* **************************************************************
+                 * ********* Life heart bar test ******************************
+                 * *************************************************************** */
+                for (i = 0; i < 10; i++) {
+
+                    hearts[i] = this.add.image((20 + (i * 18)), 50, 'singleHeart');
+                    hearts[i].setScrollFactor(0);
+                }
+
+                //this.playerLifeImg = this.physics.add.staticGroup({
+                //    key: "heart2",
+                //    repeat: 6,
+                //    setXY: { x: 500, y: 50, stepX: 40, stepY: 0 }
+                //});
+
+
                 //adds 2 hearts to display
-                this.playerLifeImg = this.add.image(500, 50, "heart2")
-                this.playerLifeImg.setScrollFactor(0);
+                //this.playerLifeImg = this.add.image(500, 50, "heart2")
+                //this.playerLifeImg.setScrollFactor(0);
 
                 /* ************************************************************
                  * ************** Colliders Section ***************************
@@ -418,6 +443,10 @@ class Shipwrecked extends Phaser.Scene {
 
                 //  Checks to see if the player overlaps with any of the boars, if he does call the boarCombat function
                 this.physics.add.overlap(this.player, this.boars, this.boarPlayerCombat, null, this);
+
+                // check for tools:
+                this.physics.add.overlap(this.player, this.machete, this.getMachete, null, this);
+
 
 
                 /* ************************************************************
@@ -526,9 +555,9 @@ class Shipwrecked extends Phaser.Scene {
 
                 // Health Heart display update:
                 //checks if 50% health
-                if (playerLife === 5) {
-                    this.playerLifeImg.setTexture("heart1");
-                }
+                //if (playerLife === 5) {
+                // this.playerLifeImg.setTexture("heart1");
+                //}
 
 
                 //  Position the center of the camera on the player
@@ -584,6 +613,76 @@ class Shipwrecked extends Phaser.Scene {
             } // end update
 
 
+        /* ********************************************************************************
+         * ********************************************************************************
+         * *******************  Other functions *******************************************
+         * ********************************************************************************
+         * ******************************************************************************** */
+
+
+        //--------------------------------------------------------------
+        // onGameObjectClicked(pointer, gameObject)
+        //
+        // Description:  A call back.  Called when any interactive object is clicked...
+        // 
+        // --------------------------------------------------------------
+        onGameObjectClicked(pointer, gameObject) {
+                console.log("made it into New onGameObjectClicked. ");
+
+                switch (gameObject.name) {
+                    case "jungle":
+
+                        if (!playerInventory.includes("Machete")) {
+                            //############### NEED A MESSAGE TO THE PLAYER HERE #################
+                            console.log("Sure wish I had a Machete!");
+                        } else {
+                            console.log("in else, Check to see if close enough!");
+
+                            console.log("player x: " + this.player.x + "  player y: " + this.player.y);
+                            console.log("jungle x: " + gameObject.x + "  jungle y: " + gameObject.y);
+                            // if player close to jungle piece then destroy it (chopped!).
+                            if (
+                                (Math.abs((this.player.x - gameObject.x)) <= 50) &&
+                                (Math.abs((this.player.y - gameObject.y)) <= 50)
+                            ) {
+                                // close enough to chop!
+                                //############### NEED A CHOPPING SOUND HERE #################
+                                gameObject.disableBody(true, true);
+                                console.log("chopping jungle yet to be fully implemented.");
+                            } else {
+                                console.log("NOPE NOT close enough!");
+                            }
+
+                        } // end else
+
+
+                        break; // end jungle
+
+                    default:
+                        break;
+
+                } // end switch
+
+
+            } // end onGameObjectClicked
+
+
+
+        //--------------------------------------------------------------
+        // getMachete()
+        //
+        // Description:  handler for when player runs over machete.
+        // puts machete in player's inventory.
+        // 
+        // --------------------------------------------------------------
+        getMachete(thePlayer, theMachete) {
+            playerInventory.push("Machete");
+            theMachete.disableBody(true, true);
+
+            //############### NEED A MESSAGE TO THE PLAYER HERE #################
+            console.log(playerInventory);
+        }
+
 
         //--------------------------------------------------------------
         //getStartPosition(parent, key, data)
@@ -609,11 +708,40 @@ class Shipwrecked extends Phaser.Scene {
         // reaches 0, ends the game.
         // -----------------------------------------------------------
         boarPlayerCombat(thePlayer, boar) {
-                playerLife -= 5;
-                boar.disableBody(true, true);
-                this.gold++;
-                this.goldText.setText("Gold: " + this.gold);
 
+                if (playerInventory.includes("Machete")) {
+                    playerLife -= 1;
+                    hearts[playerLife] = this.add.image((20 + (playerLife * 18)), 50, 'blankHeart');
+                    hearts[playerLife].setScrollFactor(0);
+                } else {
+                    let i = 0;
+                    if (playerLife <= 5) {
+                        // all blank now.
+                        for (i = 0; i < 10; i++) {
+
+                            hearts[i] = this.add.image((20 + (i * 18)), 50, 'blankHeart');
+                            hearts[i].setScrollFactor(0);
+                        }
+                    } else {
+                        // blank the last 5.
+                        let index = 0;
+                        for (i = 0; i < 5; i++) {
+                            index = playerLife - i - 1;
+                            hearts[index] = this.add.image((20 + (index * 18)), 50, 'blankHeart');
+                            hearts[index].setScrollFactor(0);
+                        }
+                    } // end else
+
+                    // now drop life by 5
+                    playerLife -= 5;
+                } // end else no machete 
+
+
+                boar.disableBody(true, true);
+                Gold++;
+                Food++;
+                this.goldText.setText("Gold: " + Gold);
+                this.foodText.setText("Food: " + Food);
 
                 if (playerLife <= 0) {
 
@@ -622,7 +750,7 @@ class Shipwrecked extends Phaser.Scene {
 
                     // turn player bloody red
                     thePlayer.setTint(0xff0000);
-                    this.playerLifeImg.setTexture("noHealth");
+                    //this.playerLifeImg.setTexture("noHealth");
 
                     // force facing
                     thePlayer.anims.play("turn");
