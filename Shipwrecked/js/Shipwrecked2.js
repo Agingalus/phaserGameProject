@@ -27,6 +27,11 @@ class Shipwrecked2 extends Phaser.Scene {
         // or sprite loaded in.
         // -----------------------------------------------------------
         preload() {
+
+                // plugings
+
+                this.load.plugin('DialogModalPlugin', './js/dialog_plugin.js');
+
                 this.load.image("bigSand", "assets/island_sand_d.jpg");
                 this.load.image("ocean", "assets/ocean16.jpg");
                 this.load.image("jungle", "assets/jungle_mntn2_d16.jpg");
@@ -59,6 +64,10 @@ class Shipwrecked2 extends Phaser.Scene {
         // Sets interaction types etc.
         // -----------------------------------------------------------
         create() {
+
+                //plugins
+                this.sys.install('DialogModalPlugin');
+                console.log(this.sys.dialogModal);
 
                 this.events.on('wake', this.onWake, this);
 
@@ -163,6 +172,16 @@ class Shipwrecked2 extends Phaser.Scene {
 
                 //  Checks to see if the player overlaps with any of the boars, if he does call the boarCombat function
                 this.physics.add.overlap(this.player, this.boars, this.boarPlayerCombat, null, this);
+
+
+
+                this.diologBox = this.sys.dialogModal.init();
+                //this.diologBox.setScrollFactor(500, 500);
+
+
+
+                this.sys.dialogModal.setText('Testing this.');
+                this.sys.dialogModal.setText('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.blaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa hhhhhhhhhhh', true);
 
             } // end create
 
@@ -285,6 +304,12 @@ class Shipwrecked2 extends Phaser.Scene {
 
                     this.playerLifeImg.setTexture("noHealth");
                     this.gameOver = true;
+                    this.diologBox = this.sys.dialogModal.init();
+                    //this.diologBox.setScrollFactor(500, 500);
+
+
+
+                    this.sys.dialogModal.setText('Testing this.');
 
                 } // end if playerLife
 
