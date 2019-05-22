@@ -1,4 +1,5 @@
-var customGameWidth = 800;
+// JavaScript source code
+const customGameWidth = 800;
 var DialogModalPlugin = function(scene) {
     // the scene that owns the plugin
     this.scene = scene;
@@ -48,9 +49,13 @@ DialogModalPlugin.prototype = {
         this.windowAlpha = opts.windowAlpha || 0.8;
         this.windowColor = opts.windowColor || 0x303030;
         this.windowHeight = opts.windowHeight || 150;
+        this.windowWidth = opts.windowWidth || customGameWidth - (this.padding * 2);
         this.padding = opts.padding || 32;
         this.closeBtnColor = opts.closeBtnColor || 'darkgoldenrod';
+        this.textColor = opts.textColor || 'gold';
         this.dialogSpeed = opts.dialogSpeed || 3;
+        this.locationX = opts.locationX || null;
+        this.locationY = opts.locationY || null;
 
         // used for animating the text
         this.eventCounter = 0;
@@ -76,7 +81,7 @@ DialogModalPlugin.prototype = {
     },
 
     // Gets the height of the game (based on the scene)
-    _getGameHeight: function() { //change to the camra
+    _getGameHeight: function() {
         return this.scene.sys.game.config.height;
     },
 
@@ -111,14 +116,18 @@ DialogModalPlugin.prototype = {
         var gameHeight = this._getGameHeight();
         var gameWidth = this._getGameWidth();
         var dimensions = this._calculateWindowDimensions(gameWidth, gameHeight);
-        this.graphics = this.scene.add.graphics();
-        this.graphics.setScrollFactor(1);
 
-        // this.graphics.scrollFactorX = 1;
-        // this.graphics.scrollFactorY = 1;
-        //this.graphics.fixedToCamera = true;
-        ///this dimentions of x and y need to = the player current place.
-        //just kill the box right before a new one is needed.
+        // check for user placement specs:
+        if (this.locationX != null) {
+            dimensions.x = this.locationX;
+        }
+        if (this.locationY != null) {
+            dimensions.y = this.locationY;
+        }
+
+        this.graphics = this.scene.add.graphics();
+        this.graphics.scrollFactorX = -0, 7;
+        this.graphics.scrollFactorY = 0;
 
         this._createOuterWindow(dimensions.x, dimensions.y, dimensions.rectWidth, dimensions.rectHeight);
         this._createInnerWindow(dimensions.x, dimensions.y, dimensions.rectWidth, dimensions.rectHeight);
@@ -127,22 +136,30 @@ DialogModalPlugin.prototype = {
 
         this._createCloseModalButtonBorder();
     },
+
+
     // Creates the close dialog window button
     _createCloseModalButton: function() {
         var self = this;
+        let buttonX = 0;
+        let buttonY = 0;
+
+        buttonX = this._getGameWidth() - this.padding - 6 - this.locationX;
+        buttonY = this.locationY + 3;
+
         this.closeBtn = this.scene.make.text({
-            x: this._getGameWidth() - this.padding - 14,
-            //x: customGameWidth - this.padding - 14,
-            y: this._getGameHeight() - this.windowHeight - this.padding + 3,
+            x: buttonX,
+            y: buttonY,
             text: 'X',
             style: {
                 font: 'bold 12px Arial',
                 fill: this.closeBtnColor
             }
 
+        }); // end closeBtn text creation.
 
-        });
         this.closeBtn.setInteractive();
+        this.closeBtn.setScrollFactor(0);
 
         this.closeBtn.on('pointerover', function() {
             this.setTint(0xff0000);
@@ -159,13 +176,20 @@ DialogModalPlugin.prototype = {
         if (self.text) self.text.destroy();
 
     },
+
+
     // Creates the close dialog button border
     _createCloseModalButtonBorder: function() {
-        var x = this._getGameWidth() - this.padding - 20;
-        //var x = customGameWidth - this.padding - 20;
-        var y = this._getGameHeight() - this.windowHeight - this.padding;
+        let x = 0;
+        let y = 0;
+
+        x = this._getGameWidth() - this.padding - 13 - this.locationX;
+        y = this.locationY + 2;
+
         this.graphics.strokeRect(x, y, 20, 20);
     },
+
+
     // Hide/Show the dialog window
     toggleWindow: function() {
         this.visible = !this.visible;
@@ -174,8 +198,15 @@ DialogModalPlugin.prototype = {
         if (this.closeBtn) this.closeBtn.visible = this.visible;
     },
 
+
     // Sets the text for the dialog window
     setText: function(text, animate) {
+
+        // check if dialog is visable.  if not, make it so.
+        if (!this.visible) {
+            this.toggleWindow();
+        }
+
         // Reset the dialog
         this.eventCounter = 0;
         this.dialog = text.split('');
@@ -183,6 +214,7 @@ DialogModalPlugin.prototype = {
 
         var tempText = animate ? '' : text;
         this._setText(tempText);
+        this.text.setScrollFactor(0);
 
         if (animate) {
             this.timedEvent = this.scene.time.addEvent({
@@ -199,25 +231,40 @@ DialogModalPlugin.prototype = {
     _animateText: function() {
         this.eventCounter++;
         this.text.setText(this.text.text + this.dialog[this.eventCounter - 1]);
+        this.text.setScrollFactor(0);
         if (this.eventCounter === this.dialog.length) {
             this.timedEvent.remove();
         }
     },
+
+
     // Calcuate the position of the text in the dialog window
-    _setText: function(text) {
+    _setText: function(newText) {
         // Reset the dialog
         if (this.text) this.text.destroy();
 
-        var x = this.padding + 10;
-        var y = this._getGameHeight() - this.windowHeight - this.padding + 10;
+        let x = this.locationX + this.padding + 20;
+        let y = this.locationY + this.padding + 10;
 
-        this.text = this.scene.make.text({
-            x,
-            y,
-            text,
-            style: {
-                wordWrap: { width: this._getGameWidth() - (this.padding * 2) - 25 }
-            }
+        this.text = this.scene.add.text(x, y, newText, {
+            fontsize: "32px",
+            strokeThickness: 1,
+            stroke: this.textColor,
+            fill: this.textColor,
+            align: "center",
+            wordWrap: { width: this._getGameWidth() - (this.padding * 2) - 25 }
         });
+
+
+
+        //this.text = this.scene.make.text({
+        //    x,
+        //    y,
+        //    newText,
+        //    style: {
+        //        wordWrap: { width: this._getGameWidth() - (this.padding * 2) - 25 }
+        //    }
+        //});
+        //this.text.setScrollFactor(0);
     }
 };
