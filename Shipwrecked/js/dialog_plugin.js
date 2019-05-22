@@ -76,7 +76,7 @@ DialogModalPlugin.prototype = {
     },
 
     // Gets the height of the game (based on the scene)
-    _getGameHeight: function() {
+    _getGameHeight: function() { //change to the camra
         return this.scene.sys.game.config.height;
     },
 
@@ -112,6 +112,13 @@ DialogModalPlugin.prototype = {
         var gameWidth = this._getGameWidth();
         var dimensions = this._calculateWindowDimensions(gameWidth, gameHeight);
         this.graphics = this.scene.add.graphics();
+        this.graphics.setScrollFactor(1);
+
+        // this.graphics.scrollFactorX = 1;
+        // this.graphics.scrollFactorY = 1;
+        //this.graphics.fixedToCamera = true;
+        ///this dimentions of x and y need to = the player current place.
+        //just kill the box right before a new one is needed.
 
         this._createOuterWindow(dimensions.x, dimensions.y, dimensions.rectWidth, dimensions.rectHeight);
         this._createInnerWindow(dimensions.x, dimensions.y, dimensions.rectWidth, dimensions.rectHeight);

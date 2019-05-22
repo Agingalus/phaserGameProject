@@ -180,14 +180,14 @@ class Shipwrecked2 extends Phaser.Scene {
                 // this.diologBox.setScrollFactor(0);
 
                 //this.diologBox = this.add.sprite(500, 500, "dude");
-                this.diologBox = this.add.text(200, 200, this.sys.dialogModal.init())
+                //this.diologBox = this.add.text(200, 200, )
+                this.sys.dialogModal.init();
 
-
-                this.diologBox.setScrollFactor(0);
+                //this.diologBox.setScrollFactor(0);
                 //this.diologBox.fixedToCamera = true;
 
                 //this.sys.dialogModal.setText('Testing this.');
-                // this.sys.dialogModal.setText('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.blaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa hhhhhhhhhhh', true);
+                this.sys.dialogModal.setText('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.blaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa hhhhhhhhhhh', true);
 
             } // end create
 
