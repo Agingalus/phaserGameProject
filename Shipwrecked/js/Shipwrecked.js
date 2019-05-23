@@ -26,10 +26,16 @@ class Shipwrecked extends Phaser.Scene {
         // or sprite loaded in.
         // -----------------------------------------------------------
         preload() {
+                //will it change
+                // plugins/
 
-                // plugins
+
+
+
                 this.load.plugin('DialogModalPlugin', './js/dialog_plugin.js');
 
+
+                this.load.plugin('GlobalFunctionsPlugin', './js/GlobalFunctions.js');
                 // main images
                 this.load.image("bigSand", "assets/island_sand_d.jpg");
                 this.load.image("ocean1", "assets/ocean4.png");
@@ -60,6 +66,11 @@ class Shipwrecked extends Phaser.Scene {
         // -----------------------------------------------------------
         create() {
 
+                this.sys.install('GlobalFunctionsPlugin');
+
+                this.sys.install('DialogModalPlugin');
+                console.log(this.sys.dialogModal);
+                console.log(this.sys.globalFunctions);
                 // General Create:
                 this.events.on('wake', this.onWake, this);
 
@@ -446,42 +457,39 @@ class Shipwrecked extends Phaser.Scene {
                 //this.scoreText = this.add.text(16, 16, myItem, { fontSize: "32px", fill: "#000" });
 
                 // adds header
-                this.goldText = this.add.text(20, 10, "Gold: " + Gold, { fontsize: "32px", strokeThickness: 1, stroke: "#fe0", fill: "#fe0", shadowStroke: true, shadowFill: true, shadowColor: "#000", shadowOffsetX: 1, shadowOffsetY: 1, align: "center" });
-                this.goldText.setScrollFactor(0);
+                this.goldText = this.add.text(this.sys.globalFunctions.goldTextFunction());
 
-                this.woodText = this.add.text(100, 10, "Wood: " + Wood, { fontsize: "32px", strokeThickness: 1, stroke: "#fe0", fill: "#fe0", align: "center" });
-                this.woodText.setScrollFactor(0);
+                this.woodText = this.add.text(this.sys.globalFunctions.woodTextFunction());
 
-                this.ropeText = this.add.text(180, 10, "Rope: " + Rope, { fontsize: "32px", strokeThickness: 1, stroke: "#fe0", fill: "#fe0", align: "center" });
-                this.ropeText.setScrollFactor(0);
+                this.ropeText = this.add.text(this.sys.globalFunctions.ropeTextFunction());
 
-                this.woolText = this.add.text(260, 10, "Wool: " + Wool, { fontsize: "32px", strokeThickness: 1, stroke: "#fe0", fill: "#fe0", align: "center" });
-                this.woolText.setScrollFactor(0);
+                this.woolText = this.add.text(this.sys.globalFunctions.woolTextFunction());
 
-                this.foodText = this.add.text(340, 10, "Food: " + Food, { fontsize: "32px", strokeThickness: 1, stroke: "#fe0", fill: "#fe0", align: "center" });
-                this.foodText.setScrollFactor(0);
+                this.foodText = this.add.text(this.sys.globalFunctions.foodTextFunction());
+
 
                 /* **************************************************************
                  * ********* Life heart bar test ******************************
                  * *************************************************************** */
+
                 for (i = 0; i < 10; i++) {
 
                     hearts[i] = this.add.image((20 + (i * 18)), 50, 'singleHeart');
                     hearts[i].setScrollFactor(0);
                 }
+                // this.add.image(this.sys.globalFunctions.makeHearts());
 
 
                 //plugins
 
                 // Dialog box:
-                this.sys.install('DialogModalPlugin');
-                console.log(this.sys.dialogModal);
+
 
                 //this.dialogBox = this.add.text(200, 200, this.sys.dialogModal.init());
                 this.dialogBox = this.sys.dialogModal;
                 this.dialogBox.init({ windowHeight: 100, windowWidth: 500, locationX: 20, locationY: 490 });
 
-                console.log(this.dialogBox);
+
 
                 // set scrollFactor so it scrolls with the camera (1). a (0) keeps in place.
                 //this.dialogBox.graphics.scrollFactorX(1);
@@ -524,7 +532,7 @@ class Shipwrecked extends Phaser.Scene {
                 this.physics.add.collider(this.sheepHerd, this.sheepHerd);
 
                 //  Checks to see if the player overlaps with any of the boars, if he does call the boarCombat function
-                this.physics.add.overlap(this.player, this.boars, this.boarPlayerCombat, null, this);
+                this.physics.add.overlap(this.player, this.boars, this.sys.globalFunctions.boarPlayerCombat, null, this);
 
 
 

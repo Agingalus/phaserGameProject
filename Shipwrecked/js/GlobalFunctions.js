@@ -110,5 +110,16 @@ GlobalFunctionsPlugin.prototype = {
         this.foodText = this.scene.add.text(340, 10, "Food: " + Food, { fontsize: "32px", strokeThickness: 1, stroke: "#fe0", fill: "#fe0", align: "center" });
         this.foodText.setScrollFactor(0);
 
+    },
+    makeHearts: function() {
+
+        /* **************************************************************
+         * ********* Life heart bar test ******************************
+         * *************************************************************** */
+        for (i = 0; i < 10; i++) {
+
+            hearts[i] = this.add.image((20 + (i * 18)), 50, 'singleHeart');
+            hearts[i].setScrollFactor(0);
+        }
     }
 }

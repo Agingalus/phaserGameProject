@@ -27,21 +27,30 @@ class Shipwrecked3 extends Phaser.Scene {
         // or sprite loaded in.
         // -----------------------------------------------------------
         preload() {
-                this.load.image("bigSand", "assets/island_sand_d.jpg");
-                this.load.image("ocean", "assets/ocean16.jpg");
-                this.load.image("jungle", "assets/jungle_mntn2_d16.jpg");
-                this.load.image("hcTree", "assets/horse-chestnut-tree_16.png");
-                this.load.image("boar", "assets/boarhit.png");
-                this.load.spritesheet("dude", "assets/universal-lpc-sprite_male_01_32pix.png", { frameWidth: 32, frameHeight: 32 });
 
-                this.load.image("ocean5", "assets/ocean5.png");
-                this.load.image("ocean6", "assets/ocean6.png")
+
+                this.load.plugin('DialogModalPlugin', './js/dialog_plugin.js');
+                this.load.plugin('GlobalFunctionsPlugin', './js/GlobalFunctions.js');
+
+
+                // main images
+                this.load.image("bigSand", "assets/island_sand_d.jpg");
+                this.load.image("ocean1", "assets/ocean4.png");
+                this.load.image("ocean2", "assets/ocean2.png");
+                this.load.image("greenGround", "assets/greenGround.png");
+                this.load.image("jungleTrees", "assets/JungleOK64.png");
+                this.load.image("macheteImg", "assets/machete16A.png");
+                this.load.image("hcTree", "assets/horse-chestnut-tree_16.png");
+                this.load.image("TreeImg", "assets/Jungle-Tree6450.png");
+                this.load.image("boar", "assets/boarhit.png");
+                this.load.spritesheet("sheepImg", "assets/sheep_eat32.png", { frameWidth: 32, frameHeight: 32 });
+                this.load.spritesheet("dude", "assets/universal-lpc-sprite_male_01_32pix.png", { frameWidth: 32, frameHeight: 32 });
 
 
                 // status icons will be on top of anything else.
-                this.load.image("heart2", "assets/heartshealth2.png");
-                this.load.image("heart1", "assets/heartshealth1.png");
-                this.load.image("noHealth", "assets/noHealth.png");
+                this.load.image("singleHeart", "assets/singleHeart16.png");
+                this.load.image("blankHeart", "assets/blankHeart16.png");
+
             } // end preload
 
 
@@ -60,6 +69,10 @@ class Shipwrecked3 extends Phaser.Scene {
         // Sets interaction types etc.
         // -----------------------------------------------------------
         create() {
+                this.sys.install('DialogModalPlugin');
+
+                this.sys.install('GlobalFunctionsPlugin');
+                console.log(this.sys.dialogModal);
 
                 this.events.on('wake', this.onWake, this);
 
@@ -134,23 +147,28 @@ class Shipwrecked3 extends Phaser.Scene {
                  * ***************************************************************************************** */
 
                 // Header and hearts
-                this.goldText = this.add.text(20, 10, "Gold: 0", { fontsize: "32px", fill: "#000", align: "center" });
-                this.goldText.setScrollFactor(0);
+                this.goldText = this.add.text(this.sys.globalFunctions.goldTextFunction());
 
-                this.woodText = this.add.text(100, 10, "Wood: 0", { fontsize: "32px", fill: "#000", align: "center" });
-                this.woodText.setScrollFactor(0);
+                this.woodText = this.add.text(this.sys.globalFunctions.woodTextFunction());
 
-                this.ropeText = this.add.text(180, 10, "Rope: 0", { fontsize: "32px", fill: "#000", align: "center" });
-                this.ropeText.setScrollFactor(0);
+                this.ropeText = this.add.text(this.sys.globalFunctions.ropeTextFunction());
 
-                this.foodText = this.add.text(260, 10, "Food: 0", { fontsize: "32px", fill: "#000", align: "center" });
-                this.foodText.setScrollFactor(0);
+                this.woolText = this.add.text(this.sys.globalFunctions.woolTextFunction());
 
+                this.foodText = this.add.text(this.sys.globalFunctions.foodTextFunction());
                 //adds 2 hearts to display
-                this.playerLifeImg = this.add.image(500, 50, "heart2")
-                this.playerLifeImg.setScrollFactor(0);
+                // this.playerLifeImg = this.add.image(500, 50, "heart2")
+                // this.playerLifeImg.setScrollFactor(0);
 
+                /* **************************************************************
+                 * ********* Life heart bar test ******************************
+                 * *************************************************************** */
 
+                for (let i = 0; i < 10; i++) {
+
+                    hearts[i] = this.add.image((20 + (i * 18)), 50, 'singleHeart');
+                    hearts[i].setScrollFactor(0);
+                }
                 /* ************************************************************
                  * ************** Colliders Section ***************************
                  * ************************************************************ */
@@ -163,11 +181,10 @@ class Shipwrecked3 extends Phaser.Scene {
                 this.physics.add.collider(this.boars, this.boars);
 
                 //  Checks to see if the player overlaps with any of the boars, if he does call the boarCombat function
-                this.physics.add.overlap(this.player, this.boars, this.boarPlayerCombat, null, this);
+                this.physics.add.overlap(this.player, this.boars, this.sys.globalFunctions.boarPlayerCombat, null, this);
 
                 // Dialog box:
-                this.sys.install('DialogModalPlugin');
-                console.log(this.sys.dialogModal);
+
 
 
                 this.dialogBox = this.sys.dialogModal;
@@ -221,9 +238,9 @@ class Shipwrecked3 extends Phaser.Scene {
 
                 // Health Heart display update:
                 // checks if 50% health
-                if (playerLife === 5) {
-                    this.playerLifeImg.setTexture("heart1");
-                }
+                // if (playerLife === 5) {
+                //     this.playerLifeImg.setTexture("heart1");
+                // }
 
                 //  Position the center of the camera on the player
                 //  We -400 because the camera width is 800px and
