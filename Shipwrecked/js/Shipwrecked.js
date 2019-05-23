@@ -92,10 +92,10 @@ this.ground = this.physics.add.staticGroup();
 let i = 0;
 let j = 0;
 for (i = 0; i < 1000; i += 16) {
-    console.log("in first i loop for sand");
-    for (j = 0; j < 1000; j += 16) {
-        this.ground.create(i, j, "sand");
-    }// end for j
+console.log("in first i loop for sand");
+for (j = 0; j < 1000; j += 16) {
+    this.ground.create(i, j, "sand");
+}// end for j
 }// end for i
 */
 
