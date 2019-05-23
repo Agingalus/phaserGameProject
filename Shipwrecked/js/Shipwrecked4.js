@@ -161,6 +161,16 @@ class Shipwrecked4 extends Phaser.Scene {
                 //  Checks to see if the player overlaps with any of the boars, if he does call the boarCombat function
                 this.physics.add.overlap(this.player, this.boars, this.boarPlayerCombat, null, this);
 
+                // Dialog box:
+                this.sys.install('DialogModalPlugin');
+                console.log(this.sys.dialogModal);
+
+
+                this.dialogBox = this.sys.dialogModal;
+                this.dialogBox.init({ windowHeight: 100, windowWidth: 500, locationX: 20, locationY: 490 });
+                this.dialogBox.setText("howdy fellow from shipreck 4");
+
+
             } // end create
 
 

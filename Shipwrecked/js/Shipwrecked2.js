@@ -175,20 +175,16 @@ class Shipwrecked2 extends Phaser.Scene {
 
 
 
-                // this.diologBox = this.add.text(this.sys.dialogModal.init());
-                // //this.diologBox.setScrollFactor(500, 500);
-                // this.diologBox.setScrollFactor(0);
+                //plugins
 
-                //this.diologBox = this.add.sprite(500, 500, "dude");
-                //this.diologBox = this.add.text(200, 200, )
-                this.sys.dialogModal.init();
+                // Dialog box:
+                this.sys.install('DialogModalPlugin');
+                console.log(this.sys.dialogModal);
 
-                //this.diologBox.setScrollFactor(0);
-                //this.diologBox.fixedToCamera = true;
 
-                //this.sys.dialogModal.setText('Testing this.');
-                this.sys.dialogModal.setText('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.blaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa hhhhhhhhhhh', true);
-
+                this.dialogBox = this.sys.dialogModal;
+                this.dialogBox.init({ windowHeight: 100, windowWidth: 500, locationX: 20, locationY: 490 });
+                this.dialogBox.setText("howdy fellow from shipreck 2");
             } // end create
 
 

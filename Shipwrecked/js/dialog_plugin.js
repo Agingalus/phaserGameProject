@@ -1,5 +1,5 @@
 // JavaScript source code
-const customGameWidth = 800;
+
 var DialogModalPlugin = function(scene) {
     // the scene that owns the plugin
     this.scene = scene;
@@ -17,6 +17,7 @@ DialogModalPlugin.register = function(PluginManager) {
 
 DialogModalPlugin.prototype = {
     // called when the plugin is loaded by the PluginManager
+    customGameWidth: 800,
     boot: function() {
         var eventEmitter = this.systems.events;
         eventEmitter.on('shutdown', this.shutdown, this);
@@ -49,7 +50,7 @@ DialogModalPlugin.prototype = {
         this.windowAlpha = opts.windowAlpha || 0.8;
         this.windowColor = opts.windowColor || 0x303030;
         this.windowHeight = opts.windowHeight || 150;
-        this.windowWidth = opts.windowWidth || customGameWidth - (this.padding * 2);
+        this.windowWidth = opts.windowWidth || this.customGameWidth - (this.padding * 2);
         this.padding = opts.padding || 32;
         this.closeBtnColor = opts.closeBtnColor || 'darkgoldenrod';
         this.textColor = opts.textColor || 'gold';
@@ -76,7 +77,7 @@ DialogModalPlugin.prototype = {
 
     // Gets the width of the game (based on the scene)
     _getGameWidth: function() {
-        return customGameWidth;
+        return this.customGameWidth;
         //return this.scene.sys.game.config.width;
     },
 
