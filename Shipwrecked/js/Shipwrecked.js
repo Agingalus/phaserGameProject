@@ -450,7 +450,7 @@ class Shipwrecked extends Phaser.Scene {
                 //this.scoreText = this.add.text(16, 16, myItem, { fontSize: "32px", fill: "#000" });
 
                 // adds header
-                this.goldtext = this.add.text(this.sys.globalFunctions.goldTextFunction());
+                //this.goldtext = this.add.text(this.sys.globalFunctions.goldTextFunction());
                 // this.goldText = this.add.text(20, 10, "Gold: " + Gold, { fontsize: "32px", strokeThickness: 1, stroke: "#fe0", fill: "#fe0", shadowStroke: true, shadowFill: true, shadowColor: "#000", shadowOffsetX: 1, shadowOffsetY: 1, align: "center" });
                 // this.goldText.setScrollFactor(0);
 
