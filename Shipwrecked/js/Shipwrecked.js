@@ -8,8 +8,10 @@ class Shipwrecked extends Phaser.Scene {
                 this.score = 0;
                 this.startX = 500;
                 this.startY = 400;
-                this.boarRunTime = 0;
+                this.boarRunTime = 150; // so we get one movement set right away.
                 this.maxBoarRun = 150;
+                this.sheepEatTime = 400; // so we get one movement set right away.
+                this.maxSheepEat = 400;
             } // end constructor
 
 
@@ -27,6 +29,10 @@ class Shipwrecked extends Phaser.Scene {
 
                 // plugins
                 this.load.plugin('DialogModalPlugin', './js/dialog_plugin.js');
+                this.sys.install('DialogModalPlugin');
+                //console.log(this.sys.dialogModal);
+                this.load.plugin('GlobalFunctionsPlugin', '.js/GlobalFunctions.js"');
+                this.sys.install('GlobalFunctionsPlugin');
 
                 // main images
                 this.load.image("bigSand", "assets/island_sand_d.jpg");
@@ -34,27 +40,19 @@ class Shipwrecked extends Phaser.Scene {
                 this.load.image("ocean2", "assets/ocean2.png");
                 this.load.image("greenGround", "assets/greenGround.png");
                 this.load.image("jungleTrees", "assets/JungleOK64.png");
-                this.load.image("macheteImg", "assets/machete64A.png");
+                this.load.image("macheteImg", "assets/machete16A.png");
                 this.load.image("hcTree", "assets/horse-chestnut-tree_16.png");
+                this.load.image("TreeImg", "assets/Jungle-Tree6450.png");
                 this.load.image("boar", "assets/boarhit.png");
+                this.load.spritesheet("sheepImg", "assets/sheep_eat32.png", { frameWidth: 32, frameHeight: 32 });
                 this.load.spritesheet("dude", "assets/universal-lpc-sprite_male_01_32pix.png", { frameWidth: 32, frameHeight: 32 });
 
 
                 // status icons will be on top of anything else.
                 this.load.image("singleHeart", "assets/singleHeart16.png");
                 this.load.image("blankHeart", "assets/blankHeart16.png");
-                this.load.image("heart2", "assets/heartshealth2.png");
-                this.load.image("heart1", "assets/heartshealth1.png");
-                this.load.image("noHealth", "assets/noHealth.png");
 
             } // end preload
-
-
-
-        // NOTE:  Our dude sprite sheet is 0 - 12 sprites wide over all. so
-        //        that means row 1 is 0 -12 for a total of 13 POSSIBLE slots.
-        //        However, we only have 7 in row 1 so slots 7-12 are empty.
-        //        row 2 starts on slot 13, etc. 
 
 
         // ---------------------------------------------------------
@@ -65,8 +63,6 @@ class Shipwrecked extends Phaser.Scene {
         // Sets interaction types etc.
         // -----------------------------------------------------------
         create() {
-
-
 
                 // General Create:
                 this.events.on('wake', this.onWake, this);
@@ -85,19 +81,6 @@ class Shipwrecked extends Phaser.Scene {
                 let i = 0;
                 let j = 0;
 
-                /*
-// add the ground we can walk on (beach etc) as the whole underlying group to start..
-this.ground = this.physics.add.staticGroup();
-//  A sand everywhere.
-let i = 0;
-let j = 0;
-for (i = 0; i < 1000; i += 16) {
-console.log("in first i loop for sand");
-for (j = 0; j < 1000; j += 16) {
-    this.ground.create(i, j, "sand");
-}// end for j
-}// end for i
-*/
 
                 // to only add an image someplace, you would say:
                 this.add.image(500, 500, "bigSand");
@@ -108,13 +91,14 @@ for (j = 0; j < 1000; j += 16) {
                 this.BigOcean.create(500, 970, "ocean2");
                 this.BigOcean.create(70, 500, "ocean1");
 
-
-
                 console.log("out of ocean 1 creation");
+
 
                 /* *********************************************************************
                  * *********** Main Map Setup ******************************************* 
                  * *********************************************************************/
+
+                // Jungle:
                 this.theJungle = this.physics.add.staticGroup();
 
                 let newChild = "";
@@ -296,17 +280,13 @@ for (j = 0; j < 1000; j += 16) {
                 // location.  We could do it that way if the player was a game global and not
                 // a scene object.
                 //----------------------------------------------------------------------
-                //this.theJungle.children.iterate(this.setJungleInteractions, this);
                 this.theJungle.children.iterate(
                     function(child) {
                         child.setInteractive();
-                        //child.name = "jungle";
                     }
-                    //    child.on('pointerdown', this.jungleClickHandler);
-                    //}, this);
                 );
 
-                this.input.on('gameobjectdown', this.onGameObjectClicked, this);
+
 
                 /* *********************************************************************
                  * *********** Add tools etc. ****************************************** 
@@ -330,7 +310,7 @@ for (j = 0; j < 1000; j += 16) {
 
                 //  Player physics properties. Give the little guy a slight bounce.
                 //this.player.setBounce(0.15);
-                this.player.setCollideWorldBounds(true);
+
 
 
                 // ######################################
@@ -378,31 +358,101 @@ for (j = 0; j < 1000; j += 16) {
                     repeat: -1
                 });
 
+
+                /* **************************************************************
+                 * ********* Input Events, Other Events Etc. ********************
+                 * *************************************************************** */
+
                 //  Input Events
                 this.cursors = this.input.keyboard.createCursorKeys();
 
+                this.input.on('gameobjectdown', this.onGameObjectClicked, this);
 
-                // Piggy scattered in some good areas for now
+                /* **************************************************************
+                 * ********* Roaming Animals *************************************
+                 * *************************************************************** */
+
+                // Piggy scattered around
                 this.boars = this.physics.add.group({
                     key: "boar",
                     repeat: 6,
-                    setXY: { x: 150, y: 0, stepX: 150, stepY: 150 }
+                    setXY: { x: 150, y: 50, stepX: 150, stepY: 150 }
                 });
 
                 // no speed now. will give random speed and direction in update
-                this.boars.children.iterate(function(child) {
-                    //  Give each boar a speed to the left and bounded by world 
-                    //child.setVelocityX(-10);
-                    child.setCollideWorldBounds(true);
+
+
+                // Sheep: try to restrict to green grass.
+                let newSheep = "";
+                this.sheepHerd = this.physics.add.group();
+                for (j = 280; j <= 600; j += 60) {
+                    for (i = 800; i < 965; i += 50) {
+                        newChild = this.sheepHerd.create(i, j, "sheepImg");
+                        newChild.name = "sheep";
+                    } // end i
+                } // end j
+
+                // make the sheep interactive: 
+                this.sheepHerd.children.iterate(
+                    function(child) {
+                        child.setInteractive();
+                    }
+                );
+
+                console.log("sheep made.  Herd: " + this.sheepHerd);
+
+
+                this.anims.create({
+                    key: "sheepLeft",
+                    frames: this.anims.generateFrameNumbers("sheepImg", { start: 0, end: 3 }),
+                    frameRate: 2,
+                    repeate: -1
                 });
+
+                this.anims.create({
+                    key: "sheepRight",
+                    frames: this.anims.generateFrameNumbers("sheepImg", { start: 4, end: 8 }),
+                    frameRate: 2,
+                    repeate: -1
+                });
+
+                //this.anims.create({
+                //    key: "sheepStand",
+                //    frames: [{ key: "sheepImg", frame: 2 }],
+                //    frameRate: 2,
+                //    repeate: -1
+                //});
+
+                // a few trees with the sheep.
+                let newTree = "";
+                this.sheepTrees = this.physics.add.staticGroup();
+
+                // only 3 trees so hardcoding location:
+                // 1:
+                newTree = this.sheepTrees.create(840, 320, "TreeImg");
+                newTree.name = "tree";
+                // 2:
+                newTree = this.sheepTrees.create(900, 460, "TreeImg");
+                newTree.name = "tree";
+                // 3:
+                newTree = this.sheepTrees.create(800, 600, "TreeImg");
+                newTree.name = "tree";
+
+                // make the trees interactive: 
+                this.sheepTrees.children.iterate(
+                    function(child) {
+                        child.setInteractive();
+                    }
+                );
 
 
                 //  The score
                 //this.scoreText = this.add.text(16, 16, myItem, { fontSize: "32px", fill: "#000" });
 
                 // adds header
-                this.goldText = this.add.text(20, 10, "Gold: " + Gold, { fontsize: "32px", strokeThickness: 1, stroke: "#fe0", fill: "#fe0", shadowStroke: true, shadowFill: true, shadowColor: "#000", shadowOffsetX: 1, shadowOffsetY: 1, align: "center" });
-                this.goldText.setScrollFactor(0);
+                this.goldtext = this.add.text(this.sys.globalFunctions.goldTextFunction());
+                // this.goldText = this.add.text(20, 10, "Gold: " + Gold, { fontsize: "32px", strokeThickness: 1, stroke: "#fe0", fill: "#fe0", shadowStroke: true, shadowFill: true, shadowColor: "#000", shadowOffsetX: 1, shadowOffsetY: 1, align: "center" });
+                // this.goldText.setScrollFactor(0);
 
                 this.woodText = this.add.text(100, 10, "Wood: " + Wood, { fontsize: "32px", strokeThickness: 1, stroke: "#fe0", fill: "#fe0", align: "center" });
                 this.woodText.setScrollFactor(0);
@@ -425,23 +475,11 @@ for (j = 0; j < 1000; j += 16) {
                     hearts[i].setScrollFactor(0);
                 }
 
-                //this.playerLifeImg = this.physics.add.staticGroup({
-                //    key: "heart2",
-                //    repeat: 6,
-                //    setXY: { x: 500, y: 50, stepX: 40, stepY: 0 }
-                //});
-
-
-                //adds 2 hearts to display
-                //this.playerLifeImg = this.add.image(500, 50, "heart2")
-                //this.playerLifeImg.setScrollFactor(0);
-
 
                 //plugins
 
                 // Dialog box:
-                this.sys.install('DialogModalPlugin');
-                console.log(this.sys.dialogModal);
+
 
                 //this.dialogBox = this.add.text(200, 200, this.sys.dialogModal.init());
                 this.dialogBox = this.sys.dialogModal;
@@ -459,17 +497,40 @@ for (j = 0; j < 1000; j += 16) {
                  * ************** Colliders Section ***************************
                  * ************************************************************ */
 
-                //  Collide the player and the boars with the ocean
+                // collide with world:
+                this.player.setCollideWorldBounds(true);
+
+                this.boars.children.iterate(function(child) {
+                    child.setCollideWorldBounds(true);
+                });
+
+                this.sheepHerd.children.iterate(function(child) {
+                    child.setCollideWorldBounds(true);
+                });
+
+                this.sheepTrees.children.iterate(function(child) {
+                    child.setCollideWorldBounds(true);
+                });
+
+                //  Collide the everything for the most part.  
                 this.physics.add.collider(this.player, this.BigOcean);
                 this.physics.add.collider(this.player, this.theJungle);
+                this.physics.add.collider(this.player, this.sheepTrees);
                 this.physics.add.collider(this.boars, this.BigOcean);
                 this.physics.add.collider(this.boars, this.theJungle);
+                this.physics.add.collider(this.sheepHerd, this.BigOcean);
+                this.physics.add.collider(this.sheepHerd, this.theJungle);
 
-                // collide boars with each other.
+
+                // collide boars and sheep with each other.
                 this.physics.add.collider(this.boars, this.boars);
+                this.physics.add.collider(this.sheepHerd, this.boars);
+                this.physics.add.collider(this.sheepHerd, this.sheepHerd);
 
                 //  Checks to see if the player overlaps with any of the boars, if he does call the boarCombat function
                 this.physics.add.overlap(this.player, this.boars, this.boarPlayerCombat, null, this);
+
+
 
                 // check for tools:
                 this.physics.add.overlap(this.player, this.machete, this.getMachete, null, this);
@@ -558,6 +619,34 @@ for (j = 0; j < 1000; j += 16) {
                 } else {
                     this.boarRunTime += 1;
                 }
+
+
+
+                // Sheep movement: 
+                if (this.sheepEatTime > this.maxSheepEat) {
+
+                    // make as random as posible but not very changing.
+                    // this.sheepHerd.forEach((child) => {
+                    this.sheepHerd.children.iterate(function(child) {
+                        if (Math.random() > 0.5) {
+                            // 25% chance to change.
+                            // 50% change for either facing direction.
+                            if (Math.random() > 0.5) {
+                                child.anims.play("sheepLeft", true);
+                            } else {
+                                child.anims.play("sheepRight", true);
+                            }
+                            //  Give each sheep a very very slow speed  
+                            child.setVelocityX(-2 + (Math.random() * 4));
+                            child.setVelocityY(-2 + (Math.random() * 4));
+                        } // end if changing
+
+                    }); // end for each
+
+                    this.sheepEatTime = 0;
+                } else {
+                    this.sheepEatTime += 1;
+                } // end sheep update
 
 
                 // player movement
@@ -660,9 +749,16 @@ for (j = 0; j < 1000; j += 16) {
                     case "jungle":
 
                         if (!playerInventory.includes("Machete")) {
-                            //############### NEED A MESSAGE TO THE PLAYER HERE #################
-                            this.dialogBox.setText("Sure wish I had a Machete!");
-                            console.log("Sure wish I had a Machete!");
+                            if (
+                                (Math.abs((this.player.x - gameObject.x)) <= 50) &&
+                                (Math.abs((this.player.y - gameObject.y)) <= 50)
+                            ) {
+
+                                this.dialogBox.setText("Sure wish I had a Machete!");
+                                console.log("Sure wish I had a Machete!");
+                            } else {
+                                this.dialogBox.setText("I am too far away from that to do anything.");
+                            }
                         } else {
                             console.log("in else, Check to see if close enough!");
 
@@ -680,6 +776,7 @@ for (j = 0; j < 1000; j += 16) {
                                 gameObject.disableBody(true, true);
                                 console.log("chopping jungle yet to be fully implemented.");
                             } else {
+                                this.dialogBox.setText("I am too far away from that to do anything.");
                                 console.log("NOPE NOT close enough!");
                             }
 
@@ -687,6 +784,92 @@ for (j = 0; j < 1000; j += 16) {
 
 
                         break; // end jungle
+
+
+                    case "sheep":
+
+                        if (!playerInventory.includes("Machete")) {
+                            if (
+                                (Math.abs((this.player.x - gameObject.x)) <= 16) &&
+                                (Math.abs((this.player.y - gameObject.y)) <= 16)
+                            ) {
+
+                                this.dialogBox.setText("I can't sheer these sheep with my bare hands!");
+                                console.log("can't sheer these sheep with bare hands");
+                            } else {
+                                this.dialogBox.setText("I am too far away from that to do anything.");
+                            }
+                        } else {
+                            console.log("in else for sheep, Check to see if close enough!");
+
+                            console.log("player x: " + this.player.x + "  player y: " + this.player.y);
+                            console.log("sheep x: " + gameObject.x + "  sheep y: " + gameObject.y);
+                            // if player close to sheep piece then destroy it (chopped!).
+                            if (
+                                (Math.abs((this.player.x - gameObject.x)) <= 16) &&
+                                (Math.abs((this.player.y - gameObject.y)) <= 16)
+                            ) {
+                                // close enough to chop!
+                                //############### NEED A sheep dieing SOUND HERE #################
+                                this.dialogBox.setText("Baaaaa!  Baaaaa! Baa.");
+
+                                gameObject.disableBody(true, true);
+
+                                // gain resources!
+                                Wool++;
+                                Food++;
+                                this.woolText.setText("Wool: " + Wool);
+                                this.foodText.setText("Food: " + Food);
+
+                            } else {
+                                this.dialogBox.setText("I am too far away from that to do anything.");
+                                console.log("NOPE NOT close enough!");
+                            }
+
+                        } // end else
+                        break; // end sheep
+
+
+                    case "tree":
+
+                        if (!playerInventory.includes("Axe")) {
+                            if (
+                                (Math.abs((this.player.x - gameObject.x)) <= 50) &&
+                                (Math.abs((this.player.y - gameObject.y)) <= 50)
+                            ) {
+
+                                this.dialogBox.setText("I sure wish I had an Axe!");
+                                console.log("I sure wish I had an Axe!");
+                            } else {
+                                this.dialogBox.setText("I am too far away from that to do anything.");
+                            }
+                        } else {
+                            console.log("in else for trees, Check to see if close enough!");
+
+                            console.log("player x: " + this.player.x + "  player y: " + this.player.y);
+                            console.log("tree x: " + gameObject.x + "  tree y: " + gameObject.y);
+                            // if player close to sheep piece then destroy it (chopped!).
+                            if (
+                                (Math.abs((this.player.x - gameObject.x)) <= 50) &&
+                                (Math.abs((this.player.y - gameObject.y)) <= 50)
+                            ) {
+                                // close enough to chop!
+                                //############### NEED A sheep dieing SOUND HERE #################
+                                this.dialogBox.setText("Chop! Chop! Chop! Tiiiimmmmmbbbbbeeerrrrrr!");
+
+                                gameObject.disableBody(true, true);
+
+                                // gain resources!
+                                Wood++;
+                                this.woodText.setText("Wood: " + Wood);
+
+                            } else {
+                                this.dialogBox.setText("I am too far away from that to do anything.");
+                                console.log("NOPE NOT close enough!");
+                            }
+
+                        } // end else
+                        break; // end tree
 
                     default:
                         break;
