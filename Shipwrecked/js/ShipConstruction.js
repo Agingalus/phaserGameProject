@@ -5,8 +5,6 @@ class ShipConstruction extends Phaser.Scene {
 
         this.gameOver = false;
         this.oldSceneKey = null;
-        this.playerX = 0;
-        this.playerY = 0;
     } // end constructor
 
 
