@@ -1,6 +1,6 @@
 // JavaScript source code
-
-var DialogModalPlugin = function(scene) {
+//const customGameWidth = 800;
+var DialogModalPlugin = function (scene) {
     // the scene that owns the plugin
     this.scene = scene;
     this.systems = scene.sys;
@@ -11,14 +11,13 @@ var DialogModalPlugin = function(scene) {
 };
 
 // Register this plugin with the PluginManager
-DialogModalPlugin.register = function(PluginManager) {
+DialogModalPlugin.register = function (PluginManager) {
     PluginManager.register('DialogModalPlugin', DialogModalPlugin, 'dialogModal');
 };
 
 DialogModalPlugin.prototype = {
     // called when the plugin is loaded by the PluginManager
-    customGameWidth: 800,
-    boot: function() {
+    boot: function () {
         var eventEmitter = this.systems.events;
         eventEmitter.on('shutdown', this.shutdown, this);
         eventEmitter.on('destroy', this.destroy, this);
@@ -26,7 +25,7 @@ DialogModalPlugin.prototype = {
 
     //  Called when a Scene shuts down, it may then come back again later
     // (which will invoke the 'start' event) but should be considered dormant.
-    shutdown: function() {
+    shutdown: function () {
 
 
         if (this.timedEvent) this.timedEvent.remove();
@@ -34,13 +33,13 @@ DialogModalPlugin.prototype = {
     },
 
     // called when a Scene is destroyed by the Scene Manager
-    destroy: function() {
+    destroy: function () {
         this.shutdown();
         this.scene = undefined;
     },
 
     // Initialize the dialog modal
-    init: function(opts) {
+    init: function (opts) {
         // Check to see if any optional parameters were passed
         if (!opts) opts = {};
         // set properties from opts object or use defaults
@@ -50,8 +49,8 @@ DialogModalPlugin.prototype = {
         this.windowAlpha = opts.windowAlpha || 0.8;
         this.windowColor = opts.windowColor || 0x303030;
         this.windowHeight = opts.windowHeight || 150;
-        this.windowWidth = opts.windowWidth || this.customGameWidth - (this.padding * 2);
-        this.padding = opts.padding || 32;
+        this.windowWidth = opts.windowWidth || this.scene.sys.game.config.width;
+        this.padding = opts.padding || 15;
         this.closeBtnColor = opts.closeBtnColor || 'darkgoldenrod';
         this.textColor = opts.textColor || 'gold';
         this.dialogSpeed = opts.dialogSpeed || 3;
@@ -76,21 +75,34 @@ DialogModalPlugin.prototype = {
 
 
     // Gets the width of the game (based on the scene)
-    _getGameWidth: function() {
-        return this.customGameWidth;
-        //return this.scene.sys.game.config.width;
+    _getGameWidth: function () {
+        return this.scene.sys.game.config.width;;
+    
     },
 
     // Gets the height of the game (based on the scene)
-    _getGameHeight: function() {
+    _getGameHeight: function () {
         return this.scene.sys.game.config.height;
     },
 
-    // Calculates where to place the dialog window based on the game size
-    _calculateWindowDimensions: function(width, height) {
-        var x = this.padding;
-        var y = height - this.windowHeight - this.padding;
-        var rectWidth = width - (this.padding * 2);
+    // Calculates dialog window dimentions and placement, can be based on the game size
+    _calculateWindowDimensions: function (width, height) {
+        var x;
+        var y;
+        if (this.locationX != null) {
+            x = this.locationX;
+        }
+        else {
+            x = this.padding;
+        }
+
+        if (this.locationY != null) {
+            y = this.locationY;
+        }
+        else {
+            y = height - this.windowHeight - this.padding;
+        }
+        var rectWidth = this.windowWidth;
         var rectHeight = this.windowHeight;
         return {
             x,
@@ -101,22 +113,24 @@ DialogModalPlugin.prototype = {
     },
 
     // Creates the inner dialog window (where the text is displayed)
-    _createInnerWindow: function(x, y, rectWidth, rectHeight) {
+    _createInnerWindow: function (x, y, rectWidth, rectHeight) {
         this.graphics.fillStyle(this.windowColor, this.windowAlpha);
         this.graphics.fillRect(x + 1, y + 1, rectWidth - 1, rectHeight - 1);
     },
 
     // Creates the border rectangle of the dialog window
-    _createOuterWindow: function(x, y, rectWidth, rectHeight) {
+    _createOuterWindow: function (x, y, rectWidth, rectHeight) {
         this.graphics.lineStyle(this.borderThickness, this.borderColor, this.borderAlpha);
         this.graphics.strokeRect(x, y, rectWidth, rectHeight);
     },
 
     // Creates the dialog window
-    _createWindow: function() {
-        var gameHeight = this._getGameHeight();
-        var gameWidth = this._getGameWidth();
-        var dimensions = this._calculateWindowDimensions(gameWidth, gameHeight);
+    _createWindow: function () {
+        //var gameHeight = this._getGameHeight();
+        //var gameWidth = this._getGameWidth();
+        //var dimensions = this._calculateWindowDimensions(gameWidth, gameHeight);
+
+        var dimensions = this._calculateWindowDimensions(this.windowWidth, this.windowHeight);
 
         // check for user placement specs:
         if (this.locationX != null) {
@@ -127,7 +141,7 @@ DialogModalPlugin.prototype = {
         }
 
         this.graphics = this.scene.add.graphics();
-        this.graphics.scrollFactorX = -0, 7;
+        this.graphics.scrollFactorX = -0,7;
         this.graphics.scrollFactorY = 0;
 
         this._createOuterWindow(dimensions.x, dimensions.y, dimensions.rectWidth, dimensions.rectHeight);
@@ -140,12 +154,14 @@ DialogModalPlugin.prototype = {
 
 
     // Creates the close dialog window button
-    _createCloseModalButton: function() {
+    _createCloseModalButton: function () {
         var self = this;
         let buttonX = 0;
         let buttonY = 0;
 
-        buttonX = this._getGameWidth() - this.padding - 6 - this.locationX;
+        //buttonX = this._getGameWidth() - this.padding - 6 - this.locationX;
+        buttonX = this.windowWidth - this.padding  + this.locationX;
+
         buttonY = this.locationY + 3;
 
         this.closeBtn = this.scene.make.text({
@@ -162,13 +178,13 @@ DialogModalPlugin.prototype = {
         this.closeBtn.setInteractive();
         this.closeBtn.setScrollFactor(0);
 
-        this.closeBtn.on('pointerover', function() {
+        this.closeBtn.on('pointerover', function () {
             this.setTint(0xff0000);
         });
-        this.closeBtn.on('pointerout', function() {
+        this.closeBtn.on('pointerout', function () {
             this.clearTint();
         });
-        this.closeBtn.on('pointerdown', function() {
+        this.closeBtn.on('pointerdown', function () {
             self.toggleWindow();
         });
 
@@ -180,11 +196,12 @@ DialogModalPlugin.prototype = {
 
 
     // Creates the close dialog button border
-    _createCloseModalButtonBorder: function() {
+    _createCloseModalButtonBorder: function () {
         let x = 0;
         let y = 0;
 
-        x = this._getGameWidth() - this.padding - 13 - this.locationX;
+        //x = this._getGameWidth() - this.padding - 13 - this.locationX;
+        x = this.windowWidth - this.padding - 6 + this.locationX;
         y = this.locationY + 2;
 
         this.graphics.strokeRect(x, y, 20, 20);
@@ -192,7 +209,7 @@ DialogModalPlugin.prototype = {
 
 
     // Hide/Show the dialog window
-    toggleWindow: function() {
+    toggleWindow: function () {
         this.visible = !this.visible;
         if (this.text) this.text.visible = this.visible;
         if (this.graphics) this.graphics.visible = this.visible;
@@ -201,13 +218,13 @@ DialogModalPlugin.prototype = {
 
 
     // Sets the text for the dialog window
-    setText: function(text, animate) {
+    setText: function (text, animate) {
 
         // check if dialog is visable.  if not, make it so.
         if (!this.visible) {
             this.toggleWindow();
         }
-
+        
         // Reset the dialog
         this.eventCounter = 0;
         this.dialog = text.split('');
@@ -229,7 +246,7 @@ DialogModalPlugin.prototype = {
 
 
     // Slowly displays the text in the window to make it appear annimated
-    _animateText: function() {
+    _animateText: function () {
         this.eventCounter++;
         this.text.setText(this.text.text + this.dialog[this.eventCounter - 1]);
         this.text.setScrollFactor(0);
@@ -240,23 +257,23 @@ DialogModalPlugin.prototype = {
 
 
     // Calcuate the position of the text in the dialog window
-    _setText: function(newText) {
+    _setText: function (newText) {
         // Reset the dialog
         if (this.text) this.text.destroy();
 
-        let x = this.locationX + this.padding + 20;
-        let y = this.locationY + this.padding + 10;
+         let x = this.locationX + this.padding + 20;
+         let y = this.locationY + this.padding + 10;
 
+        //this.text = this.scene.add.text(x, y, newText, {
+        //    fontsize: "32px", strokeThickness: 1, stroke: this.textColor, fill: this.textColor, align: "center",
+        //    wordWrap: { width: this._getGameWidth() - (this.padding * 2) - 25 }
+        //});
         this.text = this.scene.add.text(x, y, newText, {
-            fontsize: "32px",
-            strokeThickness: 1,
-            stroke: this.textColor,
-            fill: this.textColor,
-            align: "center",
-            wordWrap: { width: this._getGameWidth() - (this.padding * 2) - 25 }
+            fontsize: "32px", strokeThickness: 1, stroke: this.textColor, fill: this.textColor, align: "center",
+            wordWrap: { width: this.windowWidth - (this.padding * 2) - 25 }
         });
 
-
+        
 
         //this.text = this.scene.make.text({
         //    x,

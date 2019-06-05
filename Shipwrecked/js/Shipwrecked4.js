@@ -40,6 +40,7 @@ class Shipwrecked4 extends Phaser.Scene {
         this.load.image("hcTree", "assets/horse-chestnut-tree_16.png");
         this.load.image("TreeImg", "assets/Jungle-Tree6450.png");
         this.load.image("greenGround", "assets/greenGroundMap4.png");
+        this.load.image("VolcanoB", "assets/VolcanoBottom1.png");
         this.load.image("VolcanoB1", "assets/VolcanoBottom1Test.png");
         this.load.image("VolcanoB2", "assets/VolcanoBottom1E.png");
         this.load.image("VolcanoB3", "assets/VolcanoBottom1D.png");
@@ -84,22 +85,21 @@ class Shipwrecked4 extends Phaser.Scene {
         this.cameras.main.setBounds(0, 0, 1000, 1000);
 
         // set actual camera width and height for what we see.
-        this.cameras.main.setSize(800, 600);
-
+        //this.cameras.main.setSize(1000, 1000);
+        this.cameras.main.setSize(500, 400);
 
         // only for test..
         this.score = 6;
-
-        // loop variables
-        let i = 0;
-        let j = 0;
-
 
 
 
        /* *********************************************************************
         * *********** Main Map Setup ******************************************* 
         * *********************************************************************/
+
+        // loop variables
+        let i = 0;
+        let j = 0;
 
         //NOTE: add in order from bottom layer to top.
 
@@ -179,7 +179,8 @@ class Shipwrecked4 extends Phaser.Scene {
                 }
 
                 // randomize x placement some.
-                i += 32 + 32*rand;
+                if (rand < 1) { rand = 1 }
+                i += 32*rand;
                 tiles += 1;
                 // if we are now over the water... kick out of loop
                 if (i > 800) {
@@ -198,6 +199,16 @@ class Shipwrecked4 extends Phaser.Scene {
         } // end while j
 
 
+        //----------------------------------------------------------------------
+        // set the Iron ore to be interactive 
+        //
+        // NOTE: Click handler taken care of by GlobalFunctions plugin.
+        //----------------------------------------------------------------------
+        this.IronOreGroup.children.iterate(
+            function (child) {
+                child.setInteractive();
+            }
+        );
 
 
 
@@ -399,6 +410,11 @@ class Shipwrecked4 extends Phaser.Scene {
         //  Player physics properties. Give the little guy a slight bounce.
         // this.player.setBounce(0.15);
 
+        // set camera to follow player:
+        this.cameras.main.startFollow(this.player);
+
+
+
         //########################################################
         // NOTE: CANT do another anims for the player here.  It 
         // is already defined in the first scene and persists for
@@ -461,15 +477,43 @@ class Shipwrecked4 extends Phaser.Scene {
 
 
         // Grove of trees for wood.. Protected by boars....
-        let newTree = "";
         this.woodTrees = this.physics.add.staticGroup();
-        for (i = 240; i < 600; i += 80) {
-            for (j = 400; j < 650; j += 80) {
+
+        maxTiles = 4;
+        tiles = 0;
+        maxRows = 6;
+        jRows = 0;
+        xStart = 210;
+        i = xStart;
+        j = 400;
+
+        rand = 0;
+        let newTree = "";
+
+        while (jRows < maxRows) {
+            console.log("while map2 wood Tree  loop");
+            while (tiles <= maxTiles) {
+                rand = Math.floor(Math.random() * 4);
+                // randomize x placement some.
+                i += 10 + (32 * rand);
                 newTree = this.woodTrees.create(i, j, "TreeImg");
                 newTree.name = "tree";
-            }
+                tiles += 1;
+                if (i >= 800) {
+                    // reached the end of max row length.
+                    tiles = maxTiles + 1;
+                }
+            } // end while tiles
 
-        }
+            tiles = 0;
+            i = xStart;
+            // shift starting x placement slightly for these rows
+            if (jRows === 1 || jRows === 3)
+                i+= 20;
+            j += 45;
+            jRows += 1;
+        } // end while j
+
 
         // make the trees interactive: 
         this.woodTrees.children.iterate(
@@ -542,9 +586,13 @@ class Shipwrecked4 extends Phaser.Scene {
         this.physics.add.overlap(this.player, this.Axe, this.getAxe, null, this);
 
 
+        /* ************************************************************
+         * ***************** Dialog Box Section ***********************
+         * ************************************************************ */
+
         // Dialog box:
         this.dialogBox = this.sys.dialogModal;
-        this.dialogBox.init({ windowHeight: 100, windowWidth: 500, locationX: 20, locationY: 490 });
+        this.dialogBox.init({ windowHeight: 60, windowWidth: 350, locationX: 20, locationY: 320 });
         this.dialogBox.setText("howdy fellow from shipreck 4");
 
 
@@ -641,8 +689,8 @@ class Shipwrecked4 extends Phaser.Scene {
         //  Position the center of the camera on the player
         //  We -400 because the camera width is 800px and
         //  we want the center of the camera on the player, not the left-hand side of it
-        this.cameras.main.scrollX = this.player.x - 400;
-        this.cameras.main.scrollY = this.player.y - 300;
+        //this.cameras.main.scrollX = this.player.x - 400;
+       // this.cameras.main.scrollY = this.player.y - 300;
 
 
         /* ***************************************************
@@ -688,6 +736,8 @@ class Shipwrecked4 extends Phaser.Scene {
 
 
 
+
+
     //--------------------------------------------------------------
     // getAxe(thePlayer, theAxe)
     //
@@ -704,6 +754,16 @@ class Shipwrecked4 extends Phaser.Scene {
         console.log(playerInventory);
     }
 
+
+    // ---------------------------------------------------------
+    // setSleepFlag(bool)
+    //
+    // Description: sets our scene sleep flag to true (sleeping) or 
+    // false (awake.)
+    // -----------------------------------------------------------
+    setSleepFlag(bSleep) {
+        sleep4 = bSleep;
+    }
 
 
     // ---------------------------------------------------------
