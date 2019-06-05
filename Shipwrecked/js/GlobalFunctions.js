@@ -15,10 +15,14 @@ var GlobalFunctionsPlugin = function (scene) {
         scene.sys.events.once('boot', this.boot, this);
     }
 };
+
+
 // Register this plugin with the PluginManager
 GlobalFunctionsPlugin.register = function (PluginManager) {
     PluginManager.register('GlobalFunctionsPlugin', GlobalFunctionsPlugin, 'globalFunctions');
 };
+
+
 GlobalFunctionsPlugin.prototype = {
     boot: function () {
         var eventEmitter = this.systems.events;
@@ -67,6 +71,7 @@ GlobalFunctionsPlugin.prototype = {
 
             // no machete == Ouch Time! drop life by 5!
             playerLife -= 5;
+            this.dialogBox.setText("ow! Ow! OW!  That Hurt!");
         } // end else no machete 
 
         // update hearts: 
@@ -92,6 +97,7 @@ GlobalFunctionsPlugin.prototype = {
 
             this.gameOver = true;
             this.dialogBox.setText("Alas! You have died!");
+            //this.sys.globalFunctions.ShipwreckedGameOver(this.scene);
 
         } // end if playerLife
 
@@ -394,6 +400,9 @@ GlobalFunctionsPlugin.prototype = {
                 shipScene.oldSceneKey = this.scene.key;
                 console.log("the old scene key: " + shipScene.oldSceneKey);
 
+                // attempt to increase camera size..
+                shipScene.cameras.main.setSize(800, 600);
+
                 // save player location in global.
                 playerStartX = this.player.x;
                 playerStartY = this.player.y;
@@ -418,6 +427,10 @@ GlobalFunctionsPlugin.prototype = {
                 oldScene.scene.setVisible(this.oldSceneKey);
                 oldScene.setSleepFlag(false);
                 this.oldSceneKey = null;
+
+                // attempt to decrease camera size..
+                this.cameras.main.setSize(500, 400);
+
 
                 this.scene.setActive(false);
                 this.scene.setVisible(false);
@@ -499,5 +512,43 @@ GlobalFunctionsPlugin.prototype = {
             }
             hearts[i].setScrollFactor(0);
         }
-    }
-}
+    },
+
+
+    ///* **************************************************************
+    //* ********* Shipwrecked Game Over ******************************
+    //* *************************************************************** */
+    //ShipwreckedGameOver: function (callingScene) {
+    //    console.log("in ShipwreckedGameOver, calling scene key is: " + callingScene.key);
+    //    // Idealy we want to transition up the death image and 
+    //    // still keep the  dialog box AND kill all the other scenes...
+    //    // Soooo, we will have yet another scene that gets launched here.
+    //    let sceneTransitionConfig = {
+
+    //        target: "DeathScene",
+    //        duration: 3000,
+    //        sleep: true,
+    //        allowInput: false,
+    //        moveAbove: true,
+    //        moveBelow: false
+    //    };
+
+
+    //    callingScene.transition(sceneTransitionConfig);
+
+    //    // kill old scenes.
+    //    let manager = this.scene.manager;
+
+    //    manager.remove("ShipConstruction");
+    //    manager.remove("Shipwreck");
+    //    manager.remove("Shipwreck2");
+    //    manager.remove("Shipwreck3");
+    //    manager.remove("Shipwreck4");
+
+    //} // end ShipwreckedGameOver
+
+
+
+}// end plugin prototype
+
+
