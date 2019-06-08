@@ -13,7 +13,7 @@ let config = {
         }
     },
 
-    scene: [Shipwrecked, Shipwrecked2, Shipwrecked3, Shipwrecked4, ShipConstruction]
+    scene: [Shipwrecked, Shipwrecked2, Shipwrecked3, Shipwrecked4, ShipConstruction, PirateSailing]
 };
 
 console.log("in game.js");
@@ -38,7 +38,7 @@ let Gold = 0;
 let Wood = 0;
 let Iron = 0;
 let Wool = 0;
-let Food = 0;
+let Food = 1;
 
 //boats
 let BoatConstructor = function(pCrew, pCargo, pSpeed, pWood, pWool, pIron, pFood) {

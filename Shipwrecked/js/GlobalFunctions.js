@@ -428,38 +428,44 @@ GlobalFunctionsPlugin.prototype = {
 
 
                 case "buyCanoe":
-                    console.log("Congrats you have saved only yourself!");
+
                     if (this.sys.globalFunctions.validPurchase(canoe)) {
                         this.dialogBox.setText("Congrats you have saved only yourself!");
                         this.sys.globalFunctions.updateResourceDisplay();
+
+                        this.scene.start("PirateSailing");
+
                     } else {
                         this.dialogBox.setText("You cant afford that yet!");
                     }
                     break;
                 case "buySchooner":
-                    console.log("you have bought a schooner, and actualy saved some other people then yourself!");
+
                     if (this.sys.globalFunctions.validPurchase(schooner)) {
                         this.dialogBox.setText("you have bought a schooner, and actualy saved some other people then yourself!");
                         this.sys.globalFunctions.updateResourceDisplay();
+                        this.scene.start("PirateSailing");
                     } else {
                         this.dialogBox.setText("You cant afford that yet!");
                     }
 
                     break;
                 case "buyTwoMaster":
-                    console.log("You bought a two master and saved a bunch of people!");
+
                     if (this.sys.globalFunctions.validPurchase(twoMaster)) {
                         this.dialogBox.setText("You bought a two master and saved a bunch of people!");
                         this.sys.globalFunctions.updateResourceDisplay();
+                        this.scene.start("PirateSailing");
                     } else {
                         this.dialogBox.setText("You cant afford that yet!");
                     }
                     break;
                 case "buyFourMaster":
-                    console.log("You have saved all the people!");
+
                     if (this.sys.globalFunctions.validPurchase(fourMaster)) {
                         this.dialogBox.setText("You have saved all the people!");
                         this.sys.globalFunctions.updateResourceDisplay();
+                        this.scene.start("PirateSailing");
                     } else {
                         this.dialogBox.setText("You cant afford that yet!");
                     }
