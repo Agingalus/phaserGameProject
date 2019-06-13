@@ -349,14 +349,19 @@ class PirateSailing extends Phaser.Scene {
             // this.ship = this.scene.physics.add.group();
             // newChild = this.ship.create(50, 50, "island1");
             // newChild.name = "ship";
-            let change = 0;
-            if (this.cargoShip.from < 3) {
-                change = 70;
+            let changeY = 0;
+            let changeX = 0
+            if (this.cargoShip.from === 2) {
+                changeX = -80
+                changeY = -30;
+
+            } else if (this.cargoShip.from < 3) {
+                changeY = 70;
 
             } else {
-                change = -70;
+                changeY = -70;
             }
-            myShip = theScene.cargoShips.create(location[this.cargoShip.from - 1].x, location[this.cargoShip.from - 1].y + change, "singleShip");
+            myShip = theScene.cargoShips.create(location[this.cargoShip.from - 1].x + changeX, location[this.cargoShip.from - 1].y + changeY, "singleShip");
             myShip.to = this.cargoShip.to;
             myShip.from = this.cargoShip.from;
 
@@ -365,11 +370,11 @@ class PirateSailing extends Phaser.Scene {
             //myShip.setVelocityX(10);
             //console.log(this.cargoShip.to)
             console.log(`From: ${myShip.from}    To:${myShip.to}`)
-            if ((myShip.to === 2 && myShip.from === 4) || (myShip.to === 4 && myShip.from === 2) || (myShip.to === 3 && myShip.from === 4)) {
+            if ((myShip.to === 2 && myShip.from === 4) || (myShip.to === 4 && myShip.from === 2) || (myShip.to === 3 && myShip.from === 4) || (myShip.to === 4 && myShip.from === 3)) {
 
                 theScene.physics.accelerateTo(myShip, 300, 300, 10);
                 //console.log("going to left way point");
-            } else if ((myShip.to === 5 && myShip.from === 1) || (myShip.to === 3 && myShip.from === 5) || (myShip.to === 1 && myShip.from === 1)) {
+            } else if ((myShip.to === 5 && myShip.from === 1) || (myShip.to === 1 && myShip.from === 5) || (myShip.to === 3 && myShip.from === 5) || (myShip.to === 5 && myShip.from === 3)) {
                 //console.log("going to right way point");
                 theScene.physics.accelerateTo(myShip, 700, 300, 10);
                 // } else if (myShip.to === 3) {
@@ -389,15 +394,18 @@ class PirateSailing extends Phaser.Scene {
         wayPoint(waypoint, ship) {
             let location = [{ x: 210, y: 130 }, { x: 825, y: 175 }, { x: 480, y: 420 }, { x: 155, y: 835 }, { x: 840, y: 890 }];
 
-            if (ship.hitWaypoint === false) {
-                ship.setVelocityX(0);
-                ship.setVelocityY(0);
-                this.physics.accelerateTo(ship, location[ship.to - 1].x, location[ship.to - 1].y, 10);
+            if (!(ship.from === 1 && ship.to === 3) && !(ship.from === 3 && ship.to === 1) && !(ship.from === 2 && ship.to === 3) && !(ship.from === 3 && ship.to === 2)) {
+                if (ship.hitWaypoint === false) {
+                    ship.setVelocityX(0);
+                    ship.setVelocityY(0);
+                    this.physics.accelerateTo(ship, location[ship.to - 1].x, location[ship.to - 1].y, 10);
 
-                //ship.destroy()
-                //.log("hit waypoint, headed to" + ship.to);
-                ship.hitWaypoint = true;
+                    //ship.destroy()
+                    //.log("hit waypoint, headed to" + ship.to);
+                    ship.hitWaypoint = true;
+                }
             }
+
 
         }
 
