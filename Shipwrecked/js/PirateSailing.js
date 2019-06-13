@@ -36,7 +36,7 @@ class PirateSailing extends Phaser.Scene {
 
                 this.load.image("bigWater", "assets/ocean.jpg");
 
-                this.load.spritesheet("ship", "assets/pirateShip.png", { frameWidth: 80, frameHeight: 95 });
+                this.load.spritesheet("ship", "assets/pirateShip.png", { frameWidth: 80, frameHeight: 97 });
 
                 this.load.image("singleShip", "assets/singleShip.png");
 
