@@ -44,14 +44,13 @@ PirateFunctionsPlugin.prototype = {
 
 
     // ---------------------------------------------------------
-    // cargoShipCombat(cargoShip)
+    // cargoShipCombat(thePlayer, cargoShip)
     //
     // Description: Handler for when player and cargo ship fight.
-    // Can be called due to a player click OR due to the player's
-    // ship and the cargo ship overlapping.  In the later case,
-    // we go to hand to hand combat...
+    // Can be called due to a player click if player is within
+    // cannon range.
     // -----------------------------------------------------------
-    cargoShipCombat(cargoShip) {
+    cargoShipCombat(thePlayer, cargoShip) {
 
         // Check if player is in range.  If so then check if player
         // has any cannon.  If so always get a shot with cannon.  
@@ -66,30 +65,38 @@ PirateFunctionsPlugin.prototype = {
         // cargo ship will only return fire, never auto fire on player.
         //
 
+        console.log("in cargoshipcombat.  Cargoship hit points: " + cargoShip.Ship.hitPoints);
         // if player in range, shoot cannon!.
         if (
-            (Math.abs((this.player.x - cargoShip.x)) <= 150) &&
-            (Math.abs((this.player.y - cargoShip.y)) <= 150)
+            (Math.abs((thePlayer.x - cargoShip.x)) <= cannonRange) &&
+            (Math.abs((thePlayer.y - cargoShip.y)) <= cannonRange)
         ) {
-
             if (playerShip.cannon > 0) {
                 // #############  NEED TO DISPLAY PLAYER SHOOTING AND 
-                // play cannon shot audio
+                this.scene.CannonAudio1.volume = 0.7;
+                this.scene.CannonAudio2.volume = 0.7;
+
+                this.scene.CannonAudio1.play();
+                this.scene.CannonAudio2.play({ delay: 0.5 });
                 //############## Cargo Ship getting hit..
                 let damageToCargoShip = playerShip.cannon * 10;
-                cargoShip.hitPoints -= damageToCargoShip;
+                cargoShip.Ship.hitPoints -= damageToCargoShip;
 
-                if (cargoShip.hitpoints <= 0) {
+                if (cargoShip.Ship.hitPoints <= 0) {
                     // cargoShip sinks, player gets gold.
-                    Gold += cargoShip.gold;
-                    cargoShip.disableBody(true, true);
+                    Gold += cargoShip.Ship.gold;
+                    cargoShip.destroy();
                     this.updateSailingDisplay();
                 }
                 else {
                     // cargoShip returns fire!
-                    // play cannon shot audio
+                    this.scene.CannonAudio1.volume = 0.7;
+                    this.scene.CannonAudio2.volume = 0.7;
+
+                    this.scene.CannonAudio1.play();
+                    this.scene.CannonAudio2.play({ delay: 0.5 });
                     //###############  DISPLAY CARGOSHIP FIREING AND PLAYER GETTING HIT
-                    let damageToPlayer = cargoShip.cannon * 10;
+                    let damageToPlayer = cargoShip.Ship.cannon * 10;
 
                     // check for ironplate.
                     if (playerShip.bIronPlate) {
@@ -97,18 +104,19 @@ PirateFunctionsPlugin.prototype = {
                     }
 
                     playerShip.hitPoints -= damageToPlayer;
+                    this.updateSailingDisplay();
+
                     if (playerShip.hitPoints <= 0) {
                         // Player Sinks!! Game over!!
                         // play drowning audio
                         // sink ship..
 
                         //stop movement on screen
-                        this.physics.pause();
+                        this.scene.physics.pause();
 
-                        this.updateSailingDisplay();
-                        this.gameOver = true;
-                        this.dialogBox.setText("Alas! You have died!");
-                        this.sys.PirateFunctions.PirateGameOver(this);
+                        this.scene.gameOver = true;
+                        this.scene.dialogBox.setText("Alas! You have died!");
+                        this.scene.sys.PirateFunctions.PirateGameOver(this.scene);
 
                     }// end if player sinks
                 }// end cargoship returns fire
@@ -117,8 +125,8 @@ PirateFunctionsPlugin.prototype = {
             else {
                 // check for close range and if so, initiate hand to hand..
                 if (
-                    (Math.abs((this.player.x - cargoShip.x)) <= 25) &&
-                    (Math.abs((this.player.y - cargoShip.y)) <= 25)
+                    (Math.abs((thePlayer.x - cargoShip.x)) <= 25) &&
+                    (Math.abs((thePlayer.y - cargoShip.y)) <= 25)
                 ) {
                     // #### Implement hand to hand if desired here.. #####
 
@@ -127,7 +135,7 @@ PirateFunctionsPlugin.prototype = {
             }// end else hand to hand 
         }// end if in cannon range
         else {
-            this.dialogBox.setText("I am too far away from that to do anything.");
+            this.scene.dialogBox.setText("I am too far away from that to do anything.");
             console.log("NOPE NOT close enough!");
         }
 
@@ -159,28 +167,39 @@ PirateFunctionsPlugin.prototype = {
 
         // if player in range, shoot cannon!.
         if (
-            (Math.abs((this.player.x - hunter.x)) <= 150) &&
-            (Math.abs((this.player.y - hunter.y)) <= 150)
+            (Math.abs((thePlayer.x - hunter.x)) <= cannonRange) &&
+            (Math.abs((thePlayer.y - hunter.y)) <= cannonRange)
         ) {
 
             if (playerShip.cannon > 0) {
                 // #############  NEED TO DISPLAY PLAYER SHOOTING AND 
-                // play cannon shot audio
-                //############## Cargo Ship getting hit..
-                let damageToHunter = playerShip.cannon * 10;
-                hunter.hitPoints -= damageToHunter;
+                this.scene.CannonAudio1.volume = 0.7;
+                this.scene.CannonAudio2.volume = 0.7;
 
-                if (hunter.hitpoints <= 0) {
-                    // cargoShip sinks, player gets gold.
-                    Gold += hunter.gold;
-                    hunter.disableBody(true, true);
+                this.scene.CannonAudio1.play();
+                this.scene.CannonAudio2.play({ delay: 0.5 });
+
+                //############## Hunter Ship getting hit..
+                let damageToHunter = playerShip.cannon * 10;
+                hunter.Ship.hitPoints -= damageToHunter;
+
+                if (hunter.Ship.hitPoints <= 0) {
+                    // hunter sinks, player gets gold.
+                    Gold += hunter.Ship.gold;
+                    hunter.destroy();
                     this.updateSailingDisplay();
+                    this.scene.dialogBox.setText("ARG! We sank the scurvy Pirate Hunters we did!");
                 }
                 else {
-                    // cargoShip returns fire!
-                    // play cannon shot audio
-                    //###############  DISPLAY CARGOSHIP FIREING AND PLAYER GETTING HIT
-                    let damageToPlayer = hunter.cannon * 10;
+                    // hunter returns fire!
+                    this.scene.CannonAudio1.volume = 0.7;
+                    this.scene.CannonAudio2.volume = 0.7;
+
+                    this.scene.CannonAudio1.play();
+                    this.scene.CannonAudio2.play({ delay: 0.25 });
+
+                    //###############  DISPLAY HUNTER SHIP FIREING AND PLAYER GETTING HIT
+                    let damageToPlayer = hunter.Ship.cannon * 10;
 
                     // check for ironplate.
                     if (playerShip.bIronPlate) {
@@ -188,18 +207,20 @@ PirateFunctionsPlugin.prototype = {
                     }
 
                     playerShip.hitPoints -= damageToPlayer;
+
+                    this.updateSailingDisplay();
+
                     if (playerShip.hitPoints <= 0) {
                         // Player Sinks!! Game over!!
                         // play drowning audio
                         // sink ship..
 
                         //stop movement on screen
-                        this.physics.pause();
+                        this.scene.physics.pause();
 
-                        this.updateSailingDisplay();
-                        this.gameOver = true;
-                        this.dialogBox.setText("Alas! You have died!");
-                        this.sys.PirateFunctions.PirateGameOver(this);
+                        this.scene.gameOver = true;
+                        this.scene.dialogBox.setText("Alas! You have died!");
+                        this.scene.sys.PirateFunctions.PirateGameOver(this.scene);
 
                     }// end if player sinks
                 }// end hunter returns fire
@@ -208,8 +229,8 @@ PirateFunctionsPlugin.prototype = {
             else {
                 // check for close range and if so, initiate hand to hand..
                 if (
-                    (Math.abs((this.player.x - hunter.x)) <= 25) &&
-                    (Math.abs((this.player.y - hunter.y)) <= 25)
+                    (Math.abs((thePlayer.x - hunter.x)) <= 25) &&
+                    (Math.abs((thePlayer.y - hunter.y)) <= 25)
                 ) {
                     // #### Implement hand to hand if desired here.. #####
 
@@ -228,9 +249,11 @@ PirateFunctionsPlugin.prototype = {
     // ---------------------------------------------------------
     // HunterAttack(thePlayer, hunter)
     //
-    // Description: Handler for when Pirate Hunter attacks the player
+    // Description: Function for when Pirate Hunter attacks the player
     // from range.  Started if the player gets too close to the
-    // Pirate Hunter and stays in range for 2 seconds.  
+    // Pirate Hunter and stays in range for 2 seconds.  Called by
+    // the PirateSailing Scene via a function call from its update
+    // function.
     // Will be active if the Pirate Hunter's ship overlaps
     // the player's. See also PirateHunterCombat.
     // -----------------------------------------------------------
@@ -252,33 +275,60 @@ PirateFunctionsPlugin.prototype = {
         // hunter fires on Player:
         // play cannon shot audio
         //###############  DISPLAY Hunter FIREING AND PLAYER GETTING HIT
-        let damageToPlayer = hunter.cannon * 10;
+
+       //Hunter fireing display:
+        this.scene.muzzleFlash.x = hunter.x;
+        this.scene.muzzleFlash.y = hunter.y;
+        this.scene.muzzleFlash.setVisible(true);
+        this.wait(150);
+        this.scene.muzzleFlash.setVisible(false);
+
+        this.scene.CannonAudio1.volume = 0.7;
+        this.scene.CannonAudio2.volume = 0.7;
+
+        this.scene.CannonAudio1.play();
+        this.scene.CannonAudio2.play({ delay: 0.25 });
+
+        console.log("hunter Fires!");
+        // Player getting hit display
+
+
+        // damage determination
+        let damageToPlayer = 0;
+        console.log('hunter ship is: ' + hunter.Ship);
+        console.log('hunter Cannon are: ' + hunter.Ship.cannon);
+
+        damageToPlayer = hunter.Ship.cannon * 10;
+        console.log('initial damage to player: ' + damageToPlayer);
 
         // check for ironplate.
         if (playerShip.bIronPlate) {
             damageToPlayer = damageToPlayer * IronPlateModifier;
         }
+        console.log('After Iron Plate,  damage to player: ' + damageToPlayer);
 
         playerShip.hitPoints -= damageToPlayer;
+        console.log('After damage, playerShip hitpoints: ' + playerShip.hitPoints);
+        this.updateSailingDisplay();
+
         if (playerShip.hitPoints <= 0) {
             // Player Sinks!! Game over!!
             // play drowning audio
             // sink ship..
 
             //stop movement on screen
-            this.physics.pause();
+            this.scene.physics.pause();
 
-            this.updateSailingDisplay();
-            this.gameOver = true;
-            this.dialogBox.setText("Alas! You have died!");
-            this.sys.PirateFunctions.PirateGameOver(this);
+            this.scene.gameOver = true;
+            this.scene.dialogBox.setText("Alas! You have died!");
+            this.scene.sys.PirateFunctions.PirateGameOver(this.scene);
 
         }// end if player sinks
 
         // check for close range and if so, initiate hand to hand..
         if (
-            (Math.abs((this.player.x - hunter.x)) <= 25) &&
-            (Math.abs((this.player.y - hunter.y)) <= 25)
+            (Math.abs((thePlayer.x - hunter.x)) <= 25) &&
+            (Math.abs((thePlayer.y - hunter.y)) <= 25)
         ) {
             // #### Implement hand to hand if desired here.. #####
 
@@ -298,7 +348,7 @@ PirateFunctionsPlugin.prototype = {
     // 
     // --------------------------------------------------------------
     onGameObjectClicked: function (pointer, gameObject) {
-        console.log("made it into New onGameObjectClicked. ");
+        console.log("made it into PirateFunctions onGameObjectClicked. ");
 
         switch (gameObject.name) {
             case "pirateIntroContinueBtn":
@@ -351,7 +401,7 @@ PirateFunctionsPlugin.prototype = {
             case "pirateRetireBtn":
 
                 var retireScene = this.scene.manager.getScene("PirateRetire");
-                console.log("in ConstructBtn Handler. getScene Results: " + retireScene.scene.key);
+                console.log("in pirateRetireBtn Handler. getScene Results: " + retireScene.scene.key);
                 this.scene.wake("PirateRetire");
                 this.scene.bringToTop("PirateRetire");
                 this.scene.setActive(true, "PirateRetire");
@@ -388,7 +438,9 @@ PirateFunctionsPlugin.prototype = {
                 manager.remove("PirateIntro");
                 manager.remove("Tortuga");
                 manager.remove("PirateSailing");
+                manager.remove("DeathScene");
 
+                console.log("just leaving of PirateRetire handler.");
                 break; // end pirateRetireBtn
 
 
@@ -396,8 +448,8 @@ PirateFunctionsPlugin.prototype = {
 
                 if (playerShip.cannon <= 0) {
                     if (
-                        (Math.abs((this.player.x - gameObject.x)) <= 30) &&
-                        (Math.abs((this.player.y - gameObject.y)) <= 30)
+                        (Math.abs((this.player.x - gameObject.x)) <= cannonRange) &&
+                        (Math.abs((this.player.y - gameObject.y)) <= cannonRange)
                     ) {
                         //this.SheepAudio.play();
                         this.dialogBox.setText("I don't have any cannons!  I can't shoot that ship!");
@@ -409,17 +461,17 @@ PirateFunctionsPlugin.prototype = {
                     }
                 }
                 else {
-                    console.log("in else for cargoShip, Check to see if close enough!");
+                    //console.log("in else for cargoShip, Check to see if close enough!");
 
-                    console.log("player x: " + this.player.x + "  player y: " + this.player.y);
-                    console.log("cargoship x: " + gameObject.x + "  cargoship y: " + gameObject.y);
+                    //console.log("player x: " + this.player.x + "  player y: " + this.player.y);
+                    //console.log("cargoship x: " + gameObject.x + "  cargoship y: " + gameObject.y);
                     // if player close to ship piece then do battle!.
                     if (
-                        (Math.abs((this.player.x - gameObject.x)) <= 30) &&
-                        (Math.abs((this.player.y - gameObject.y)) <= 30)
+                        (Math.abs((this.player.x - gameObject.x)) <= cannonRange) &&
+                        (Math.abs((this.player.y - gameObject.y)) <= cannonRange)
                     ) {
                         // close enough to shoot!
-                        this.sys.PirateFunctions.cargoShipCombat(gameObject);
+                        this.sys.PirateFunctions.cargoShipCombat(this.player, gameObject);
                     }
                     else {
                         this.dialogBox.setText("I am too far away from that to do anything.");
@@ -427,7 +479,47 @@ PirateFunctionsPlugin.prototype = {
                     }
 
                 }// end else
-                break; // end sheep
+                break; // end cargoship
+
+
+
+            case "hunterShip":
+
+                if (playerShip.cannon <= 0) {
+                    if (
+                        (Math.abs((this.player.x - gameObject.x)) <= cannonRange) &&
+                        (Math.abs((this.player.y - gameObject.y)) <= cannonRange)
+                    ) {
+                        //this.SheepAudio.play();
+                        this.dialogBox.setText("I don't have any cannons!  I can't shoot that ship!");
+                        console.log("no cannons to shoot with");
+                    }
+                    else {
+                        //this.CannonShotsAudio.play();
+                        this.dialogBox.setText("I am too far away from that to do anything.");
+                    }
+                } // end if player doesn't have cannons
+                else {
+                    console.log("in else for hunterShip, Check to see if close enough!");
+
+                    //console.log("player x: " + this.player.x + "  player y: " + this.player.y);
+                    //console.log("hunterShip x: " + gameObject.x + "  hunterShip y: " + gameObject.y);
+                    // if player close to ship piece then do battle!.
+                    if (
+                        (Math.abs((this.player.x - gameObject.x)) <= cannonRange) &&
+                        (Math.abs((this.player.y - gameObject.y)) <= cannonRange)
+                    ) {
+                        // close enough to shoot!
+                        this.sys.PirateFunctions.PirateHunterCombat(this.player, gameObject);
+                    }
+                    else {
+                        this.dialogBox.setText("I am too far away from that to do anything.");
+                        console.log("NOPE NOT close enough!");
+                    }
+
+                }// end else
+                break; // end hunterShip
+
 
 
             case "TortugaPort":
@@ -438,8 +530,8 @@ PirateFunctionsPlugin.prototype = {
                 console.log("port x: " + gameObject.x + "  port y: " + gameObject.y);
 
                 if (
-                    (Math.abs((this.player.x - gameObject.x)) <= 60) &&
-                    (Math.abs((this.player.y - gameObject.y)) <= 60)
+                    (Math.abs((this.player.x - gameObject.x)) <= 40) &&
+                    (Math.abs((this.player.y - gameObject.y)) <= 40)
                 ) {
                     // close enough to go to port!
                     var portScene = this.scene.manager.getScene("Tortuga");
@@ -595,6 +687,31 @@ PirateFunctionsPlugin.prototype = {
                 break;
 
 
+            // ******* Repair Ship ********
+            case "repairShipBtn":
+                // repair the players ship for as much gold as they have or however much it takes.
+                let cost = (playerShip.maxHitPoints - playerShip.hitPoints) * 2;
+                console.log("cost for repair is: " + cost);
+
+                if (Gold >= cost) {
+                    playerShip.hitPoints = playerShip.maxHitPoints;
+                    Gold -= cost;
+                    this.dialogBox.setText("Ship fully repaired for: " + cost + " gold.");
+                }
+                else {
+                    let ptsRepairable = Gold / 2;
+                    playerShip.hitPoints += ptsRepairable;
+                    Gold = 0;
+                    this.dialogBox.setText("Repaired as much as you had gold for.");
+                }
+
+                // update display
+                this.sys.PirateFunctions.updateTortugaDisplay();
+
+                break; // end repair ship.
+
+
+                
             default:
                 break;
 
@@ -608,40 +725,94 @@ PirateFunctionsPlugin.prototype = {
     ***********  Text Display initalization functions:  All scenes must call these to enable their display *********
     ************************************************************************************************************ */
     sailingTextFunction: function () {
-        this.sailingGoldText = this.scene.add.text(50, 10, "Gold: " + Gold, { fontsize: "32px", strokeThickness: 1, stroke: "#fe0", fill: "#fe0", shadowStroke: true, shadowFill: true, shadowColor: "#000", shadowOffsetX: 1, shadowOffsetY: 1, align: "center" });
+
+        SailingStyle = { font: "20px Courier", strokeThickness: 1, stroke: "#fe0", fill: "#fe0", shadowStroke: true, shadowFill: true, shadowColor: "#000", shadowOffsetX: 1, shadowOffsetY: 1, align: "center" };
+
+        //this.sailingGoldText = this.scene.add.text(50, 10, "Gold: " + Gold, { fontsize: "32px", strokeThickness: 1, stroke: "#fe0", fill: "#fe0", shadowStroke: true, shadowFill: true, shadowColor: "#000", shadowOffsetX: 1, shadowOffsetY: 1, align: "center" });
+        //this.sailingGoldText.setScrollFactor(0);
+
+        this.sailingGoldText = this.scene.add.text(20, 10, "Gold: " + Gold, SailingStyle);
         this.sailingGoldText.setScrollFactor(0);
+
+        this.sailingShipText = this.scene.add.text(170, 10, 'Ship: ' + playerShip.shipType, SailingStyle);
+        this.sailingShipText.setScrollFactor(0);
+
+        this.sailingShipCannonText = this.scene.add.text(350, 10, 'Cannons: ' + playerShip.cannon, SailingStyle);
+        this.sailingShipCannonText.setScrollFactor(0);
+
+        this.sailingHitpointsText = this.scene.add.text(20, 40, 'Hull Strength: ' + playerShip.hitPoints, SailingStyle);
+        this.sailingHitpointsText.setScrollFactor(0);
+
+
     },
 
     tortugaTextFunction: function () {
-        TortugaStyle = { font: "20px Courier", fill: "#000", tabs: [60, 60, 60] };
+        TortugaStyle = { font: "20px Courier", strokeThickness: 1, stroke: "#000", fill: "#000", tabs: [60, 60, 60] };
 
-        this.tortugaGoldText = this.scene.add.text(220, 20, "Gold: " + Gold, TortugaStyle);
+        this.tortugaGoldText = this.scene.add.text(290, 20, "Gold: ", TortugaStyle);
         this.tortugaGoldText.setScrollFactor(0);
 
-        this.tortugaPlayerShipText = this.scene.add.text(350, 20, 'Current Ship: ' + playerShip.shipType, TortugaStyle);
+        this.tortugaGoldAmountText = this.scene.add.text(360, 20,  Gold, { font: "20px Courier", strokeThickness: 1, stroke: "#fe0", fill: "#fe0", tabs: [60, 60, 60] });
+        this.tortugaGoldText.setScrollFactor(0);
+
+        this.tortugaPlayerShipText = this.scene.add.text(420, 20, 'Current Ship: ' + playerShip.shipType, TortugaStyle);
         this.tortugaPlayerShipText.setScrollFactor(0);
 
-        this.tortugaShipCannonText = this.scene.add.text(20, 430, 'Cannons on Board: ' + playerShip.cannon + '  Available Space: ' + (playerShip.maxCannon - playerShip.cannon), TortugaStyle);
+        this.tortugaShipCannonText = this.scene.add.text(90, 355, 'Cannons on Board: ' + playerShip.cannon + '  Available Space: ' + (playerShip.maxCannon - playerShip.cannon), TortugaStyle);
         this.tortugaShipCannonText.setScrollFactor(0);
+
+        this.tortugaShipRepairText = this.scene.add.text(370, 415, 'Max Cost: ' + ((playerShip.maxHitPoints - playerShip.hitPoints) * 2), TortugaStyle);
+        this.tortugaShipRepairText.setScrollFactor(0);
 
     },
 
 
+    retiredTextFunction: function () {
+        RetiredStyle = { font: "20px Courier", strokeThickness: 1, stroke: "#000", fill: "#000", tabs: [60, 60, 60] };
+
+        this.retiredGoldText = this.scene.add.text(250, 20, "Gold: ", RetiredStyle);
+        this.retiredGoldText.setScrollFactor(0);
+
+        this.retiredGoldAmountText = this.scene.add.text(320, 20, Gold, { font: "20px Courier", strokeThickness: 1, stroke: "#fe0", fill: "#fe0", tabs: [60, 60, 60] });
+        this.retiredGoldText.setScrollFactor(0);
+
+        this.retiredPlayerShipText = this.scene.add.text(420, 20, 'Current Ship: ' + playerShip.shipType, RetiredStyle);
+        this.retiredPlayerShipText.setScrollFactor(0);
+
+        this.retiredScoreText = this.scene.add.text(140, 50, 'Pirates Score: ' + PiratesScore, RetiredStyle);
+        this.retiredScoreText.setScrollFactor(0);
+
+    },
+
+
+   
 
     /* **********************************************************************************************************
     ***********  Text Display update function:  All scenes should call this on wake to update their displays. *********
     ************************************************************************************************************ */
     updateTortugaDisplay: function () {
-        this.tortugaGoldText.setText("Gold: " + Gold);
+        this.tortugaGoldText.setText("Gold: ");
+        this.tortugaGoldAmountText.setText(Gold);
         this.tortugaPlayerShipText.setText('Current Ship: ' + playerShip.shipType);
         this.tortugaShipCannonText.setText('Cannons on Board: ' + playerShip.cannon + '  Available Space: ' + (playerShip.maxCannon - playerShip.cannon));
+        this.tortugaShipRepairText.setText('Max Cost: ' + ((playerShip.maxHitPoints - playerShip.hitPoints) * 2), TortugaStyle);
 
     },
 
     updateSailingDisplay: function () {
-        this.sailingText.setText("Gold: " + Gold);
+        this.sailingGoldText.setText("Gold: " + Gold);
+        this.sailingShipText.setText('Ship: ' + playerShip.shipType);
+        this.sailingShipCannonText.setText('Cannons: ' + playerShip.cannon);
+        this.sailingHitpointsText.setText('Hull Strength: ' + playerShip.hitPoints);
     },
 
+
+    updateRetiredDisplay: function () {
+        this.retiredGoldText.setText("Gold: ");
+        this.retiredGoldAmountText.setText(Gold);
+        this.retiredPlayerShipText.setText('Current Ship: ' + playerShip.shipType);
+        this.retiredScoreText.setText('Pirates Score: ' + PiratesScore);
+    },
 
     /* **************************************************************
     * ********* Initial making of Life bar... Might not need now.. **
@@ -676,147 +847,162 @@ PirateFunctionsPlugin.prototype = {
     /* **************************************************************
      * ***************** Pirate Hunter Spawn Timer ******************
      * *************************************************************** */
-    HunterSpawnTimer: function (bPrintNow) {
+    //HunterSpawnTimer: function (bPrintNow) {
 
-        // Dont do any time related stuff unless the game is started.
-        // Have to put this here because on launch, updates happen so this 
-        // would get started without the game started flag..
-        if (G_bGameStarted) {
+    //    // Dont do any time related stuff unless the game is started.
+    //    // Have to put this here because on launch, updates happen so this 
+    //    // would get started without the game started flag..
+    //    if (G_bGameStarted) {
 
-            let newTime = Date.now();
-            let newTimeLeft = 0;
+    //        let newTime = Date.now();
+    //        let newTimeLeft = 0;
 
-            // calculate time left:
-            newTimeLeft = explodeTime - (newTime - startTime);
+    //        // calculate time left:
+    //        newTimeLeft = explodeTime - (newTime - startTime);
 
-            if ((newTimeLeft < 20000) && !this.gameOver) {
-                G_bShake = true;
-                if (!(this.scene.EarthQuakeAudio.isPlaying)) {
-                    this.scene.EarthQuakeAudio.play({ loop: true });
-                }
-            }
+    //        if ((newTimeLeft < 20000) && !this.gameOver) {
+    //            G_bShake = true;
+    //            if (!(this.scene.EarthQuakeAudio.isPlaying)) {
+    //                this.scene.EarthQuakeAudio.play({ loop: true });
+    //            }
+    //        }
 
-            if (bPrintNow || (newTimeLeft > 0 && (timeLeft - newTimeLeft) >= 1000)) {
-                // update timer display
+    //        if (bPrintNow || (newTimeLeft > 0 && (timeLeft - newTimeLeft) >= 1000)) {
+    //            // update timer display
 
-                // calculate the global display values.
-                theMin = Math.floor((newTimeLeft / 1000) / 60);
-                theSec = Math.floor((newTimeLeft / 1000) % 60);
+    //            // calculate the global display values.
+    //            theMin = Math.floor((newTimeLeft / 1000) / 60);
+    //            theSec = Math.floor((newTimeLeft / 1000) % 60);
 
-                this.updateTimerDisplay();
+    //            this.updateTimerDisplay();
 
-                // update global timeLeft
-                timeLeft = newTimeLeft;
+    //            // update global timeLeft
+    //            timeLeft = newTimeLeft;
 
-            }
-            else if ((newTimeLeft > -1000) && (newTimeLeft <= 1000)) {
-                // volcano starts to blow..
-                if (!(this.scene.VolcanoAudio.isPlaying)) {
-                    this.scene.VolcanoAudio.play();
-                }
-            }
-            else if (newTimeLeft <= 0) {
-                this.scene.VolcanoAudio2.play();
+    //        }
+    //        else if ((newTimeLeft > -1000) && (newTimeLeft <= 1000)) {
+    //            // volcano starts to blow..
+    //            if (!(this.scene.VolcanoAudio.isPlaying)) {
+    //                this.scene.VolcanoAudio.play();
+    //            }
+    //        }
+    //        else if (newTimeLeft <= 0) {
+    //            this.scene.VolcanoAudio2.play();
 
-                if (this.scene.EarthQuakeAudio.isPlaying) {
-                    this.scene.EarthQuakeAudio.stop();
-                }
+    //            if (this.scene.EarthQuakeAudio.isPlaying) {
+    //                this.scene.EarthQuakeAudio.stop();
+    //            }
 
-                this.ShipwreckedGameOver(this.scene, true);
-                // stop earthquake audio...
-            }
-        }// end if game started. 
+    //            this.ShipwreckedGameOver(this.scene, true);
+    //            // stop earthquake audio...
+    //        }
+    //    }// end if game started. 
 
-    }, // end VolcanoTimer
+    //}, // end VolcanoTimer
 
 
     /* **************************************************************
-    * ********* Shipwrecked Game Over ******************************
+    * ********* wait  utility function ******************************
+    * timeToWait in milliseconds
     * *************************************************************** */
-    ShipwreckedGameOver: function (callingScene, bVolcano) {
+    wait: function (timeToWait) {
+        startTime = Date.now();
+        while ((Date.now() - startTime) < timeToWait) {
+            // freeze, do nada
+        }
+    },// end wait.
+
+
+
+
+    /* **************************************************************
+    * ********* Pirate Game Over ******************************
+    * *************************************************************** */
+    PirateGameOver: function (callingScene, bVolcano) {
+        console.log("just entered PirateGameOver function");
 
         /* ------------------------------------------------------------------------------
-         * NOTE: transition function does not exist in our version.It does in the next but
-         * in the next, the dialog plug in code is broken.
+         * NOTE: transition function does not exist in our version.It does in the latest but
+         * in the latest, the dialog plug in code is broken.
          * ***************************************************************** */
-        // stop all environment audios except volcano...
+        // stop all environment audios...
         if (callingScene.OceanAudio) {
             if (callingScene.OceanAudio.isPlaying) {
                 callingScene.OceanAudio.stop();
             }
         }
-        if (callingScene.JungleAudio) {
-            if (callingScene.JungleAudio.isPlaying) {
-                callingScene.JungleAudio.stop();
-            }
-        }
-        if (callingScene.BoarAudio) {
-            if (callingScene.BoarAudio.isPlaying) {
-                callingScene.BoarAudio.stop();
-            }
-        }
-        if (callingScene.SheepAudio) {
-            if (callingScene.SheepAudio.isPlaying) {
-                callingScene.SheepAudio.stop();
-            }
-        }
-        if (callingScene.HeadChopAudio) {
-            if (callingScene.HeadChopAudio.isPlaying) {
-                callingScene.HeadChopAudio.stop();
-            }
-        }
-        if (callingScene.ChopWoodAudio) {
-            if (callingScene.ChopWoodAudio.isPlaying) {
-                callingScene.ChopWoodAudio.stop();
-            }
-        }
-        if (callingScene.JungleChopAudio) {
-            if (callingScene.JungleChopAudio.isPlaying) {
-                callingScene.JungleChopAudio.stop();
-            }
-        }
-        if (callingScene.PickAxeAudio) {
-            if (callingScene.PickAxeAudio.isPlaying) {
-                callingScene.PickAxeAudio.stop();
-            }
-        }
-        if (callingScene.HallelujahAudio) {
-            if (callingScene.HallelujahAudio.isPlaying) {
-                callingScene.HallelujahAudio.stop();
-            }
-        }
-        if (callingScene.EarthQuakeAudio) {
-            if (callingScene.EarthQuakeAudio.isPlaying) {
-                callingScene.EarthQuakeAudio.stop();
-            }
-        }
+        //if (callingScene.JungleAudio) {
+        //    if (callingScene.JungleAudio.isPlaying) {
+        //        callingScene.JungleAudio.stop();
+        //    }
+        //}
+        //if (callingScene.BoarAudio) {
+        //    if (callingScene.BoarAudio.isPlaying) {
+        //        callingScene.BoarAudio.stop();
+        //    }
+        //}
+        //if (callingScene.SheepAudio) {
+        //    if (callingScene.SheepAudio.isPlaying) {
+        //        callingScene.SheepAudio.stop();
+        //    }
+        //}
+        //if (callingScene.HeadChopAudio) {
+        //    if (callingScene.HeadChopAudio.isPlaying) {
+        //        callingScene.HeadChopAudio.stop();
+        //    }
+        //}
+        //if (callingScene.ChopWoodAudio) {
+        //    if (callingScene.ChopWoodAudio.isPlaying) {
+        //        callingScene.ChopWoodAudio.stop();
+        //    }
+        //}
+        //if (callingScene.JungleChopAudio) {
+        //    if (callingScene.JungleChopAudio.isPlaying) {
+        //        callingScene.JungleChopAudio.stop();
+        //    }
+        //}
+        //if (callingScene.PickAxeAudio) {
+        //    if (callingScene.PickAxeAudio.isPlaying) {
+        //        callingScene.PickAxeAudio.stop();
+        //    }
+        //}
+        //if (callingScene.HallelujahAudio) {
+        //    if (callingScene.HallelujahAudio.isPlaying) {
+        //        callingScene.HallelujahAudio.stop();
+        //    }
+        //}
+        //if (callingScene.EarthQuakeAudio) {
+        //    if (callingScene.EarthQuakeAudio.isPlaying) {
+        //        callingScene.EarthQuakeAudio.stop();
+        //    }
+        //}
 
 
 
-        // scene specific audios
-        if (callingScene.LavaAudio) {
+        //// scene specific audios
+        //if (callingScene.LavaAudio) {
 
-            if (callingScene.LavaAudio.isPlaying) {
-                callingScene.LavaAudio.stop();
-            }
+        //    if (callingScene.LavaAudio.isPlaying) {
+        //        callingScene.LavaAudio.stop();
+        //    }
 
-        }
+        //}
 
-        if (callingScene.SizzlingAudio) {
+        //if (callingScene.SizzlingAudio) {
 
-            if (callingScene.SizzlingAudio.isPlaying) {
-                callingScene.SizzlingAudio.stop();
-            }
+        //    if (callingScene.SizzlingAudio.isPlaying) {
+        //        callingScene.SizzlingAudio.stop();
+        //    }
 
-        }
+        //}
 
-        if (callingScene.ForestFireAudio) {
+        //if (callingScene.ForestFireAudio) {
 
-            if (callingScene.ForestFireAudio.isPlaying) {
-                callingScene.ForestFireAudio.stop();
-            }
+        //    if (callingScene.ForestFireAudio.isPlaying) {
+        //        callingScene.ForestFireAudio.stop();
+        //    }
 
-        }
+        //}
 
 
 
@@ -833,21 +1019,17 @@ PirateFunctionsPlugin.prototype = {
         // get manager to enable killing old scenes.
         let manager = callingScene.scene.manager;
 
-        // set text box text for DeathScene if from volcano.
-        if (bVolcano) {
-            manager.getScene("DeathScene").dialogBox.setText("The Volcano blew up!  Alas!  You have died!");
-        }
+        // set text box text for DeathScene 
+        manager.getScene("DeathScene").dialogBox.setText("Your Ship has been Sunk!!  Arg!  You're sleeping with the fishes!");
 
         // now remove them.
-        manager.remove("ShipConstruction");
-        manager.remove("Shipwreck");
-        manager.remove("Shipwreck2");
-        manager.remove("Shipwreck3");
-        manager.remove("Shipwreck4");
+        manager.remove("Tortuga");
+        manager.remove("PirateSailing");
+        manager.remove("PirateRetire");
 
         this.gameOver = true;
 
-    } // end ShipwreckedGameOver
+        } // end PirateGameOver
 
 
 }// end plugin prototype
