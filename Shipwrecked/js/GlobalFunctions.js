@@ -80,7 +80,6 @@ GlobalFunctionsPlugin.prototype = {
         this.sys.globalFunctions.updateHearts();
 
         boar.disableBody(true, true);
-        Gold++;
         Food++;
         this.sys.globalFunctions.goldText.setText("Gold: " + Gold);
         this.sys.globalFunctions.foodText.setText("Food: " + Food);
@@ -99,7 +98,7 @@ GlobalFunctionsPlugin.prototype = {
 
             this.gameOver = true;
             this.dialogBox.setText("Alas! You have died!");
-            this.sys.globalFunctions.ShipwreckedGameOver(this);
+            this.sys.globalFunctions.ShipwreckedGameOver(this, false);
 
         } // end if playerLife
 
@@ -142,7 +141,6 @@ GlobalFunctionsPlugin.prototype = {
                         (Math.abs((this.player.y - gameObject.y)) <= 60)
                     ) {
                         // close enough to chop!
-                        this.JungleChopAudio.setSeek(2000);
                         this.JungleChopAudio.play();
                         this.dialogBox.setText("CHOP! CHOP!");
 
@@ -1039,9 +1037,19 @@ GlobalFunctionsPlugin.prototype = {
         // get manager to enable killing old scenes.
         let manager = callingScene.scene.manager;
 
+        // handle on deathScene.
+        let Death = manager.getScene("DeathScene");
+
+
         // set text box text for DeathScene if from volcano.
         if (bVolcano) {
-            manager.getScene("DeathScene").dialogBox.setText("The Volcano blew up!  Alas!  You have died!");
+            Death.dialogBox.setText("The Volcano blew up!  Alas!  You have died!");
+        }
+        else {
+            // death by boar!
+            // Play DeathScream audio from DeathScene
+            Death.DeathScreamAudio.volume = 0.7;
+            Death.DeathScreamAudio.play();
         }
 
         // now remove them.
