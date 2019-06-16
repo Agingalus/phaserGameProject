@@ -61,6 +61,12 @@ GlobalFunctionsPlugin.prototype = {
     //########################################################################
     // -----------------------------------------------------------
     boarPlayerCombat: function (thePlayer, boar) {
+        // use manager to get current scene and check if sleeping.
+        var callingScene = this.scene.manager.getScene(this.scene.key);
+        // nothing seems to keep scenes from getting input.. have to check in click handlers too!
+        if (callingScene.isSleepFlagSet()) {
+            return;
+        }
 
         if (playerInventory.includes("Machete")) {
             playerLife -= 1;
@@ -117,6 +123,17 @@ GlobalFunctionsPlugin.prototype = {
         switch (gameObject.name) {
             case "jungle":
 
+                console.log("jungle click: Current Scene: " + this.scene.key);
+
+                // use manager to get current scene and check if sleeping.
+                var callingScene = this.scene.manager.getScene(this.scene.key);
+                // nothing seems to keep scenes from getting input.. have to check in click handlers too!
+                if (callingScene.isSleepFlagSet()) {
+                    console.log("jungle Click, calling scene is sleeping");
+                    return;
+                }
+
+
                 if (!playerInventory.includes("Machete")) {
                     if (
                         (Math.abs((this.player.x - gameObject.x)) <= 60) &&
@@ -159,6 +176,13 @@ GlobalFunctionsPlugin.prototype = {
 
 
             case "sheep":
+                // use manager to get current scene and check if sleeping.
+                var callingScene = this.scene.manager.getScene(this.scene.key);
+                // nothing seems to keep scenes from getting input.. have to check in click handlers too!
+                if (callingScene.isSleepFlagSet()) {
+                    return;
+                }
+
 
                 if (!playerInventory.includes("Machete")) {
                     if (
@@ -208,6 +232,13 @@ GlobalFunctionsPlugin.prototype = {
 
 
             case "tree":
+                // use manager to get current scene and check if sleeping.
+                var callingScene = this.scene.manager.getScene(this.scene.key);
+                // nothing seems to keep scenes from getting input.. have to check in click handlers too!
+                if (callingScene.isSleepFlagSet()) {
+                    return;
+                }
+
 
                 if (!playerInventory.includes("Axe")) {
                     if (
@@ -257,6 +288,13 @@ GlobalFunctionsPlugin.prototype = {
             case "Iron2":
             case "Iron3":
             case "Iron4":
+                // use manager to get current scene and check if sleeping.
+                var callingScene = this.scene.manager.getScene(this.scene.key);
+                // nothing seems to keep scenes from getting input.. have to check in click handlers too!
+                if (callingScene.isSleepFlagSet()) {
+                    return;
+                }
+
 
                 if (!playerInventory.includes("PickAxe")) {
                     if (
@@ -327,6 +365,13 @@ GlobalFunctionsPlugin.prototype = {
             case "Gold2":
             case "Gold3":
             case "Gold4":
+                // use manager to get current scene and check if sleeping.
+                var callingScene = this.scene.manager.getScene(this.scene.key);
+                // nothing seems to keep scenes from getting input.. have to check in click handlers too!
+                if (callingScene.isSleepFlagSet()) {
+                    return;
+                }
+
 
                 if (!playerInventory.includes("PickAxe")) {
                     if (
@@ -394,6 +439,13 @@ GlobalFunctionsPlugin.prototype = {
 
 
             case "ShipConstructBtn":
+                // use manager to get current scene and check if sleeping.
+                var callingScene = this.scene.manager.getScene(this.scene.key);
+                // nothing seems to keep scenes from getting input.. have to check in click handlers too!
+                if (callingScene.isSleepFlagSet()) {
+                    return;
+                }
+
                 var shipScene = this.scene.manager.getScene("ShipConstruction");
                 console.log("in ConstructBtn Handler. getScene Results: " + shipScene.scene.key);
                 this.scene.wake("ShipConstruction");
@@ -422,6 +474,14 @@ GlobalFunctionsPlugin.prototype = {
 
 
             case "ShipBackBtn":
+                // use manager to get current scene and check if sleeping.
+                var callingScene = this.scene.manager.getScene(this.scene.key);
+                // nothing seems to keep scenes from getting input.. have to check in click handlers too!
+                if (callingScene.isSleepFlagSet()) {
+                    return;
+                }
+
+
                 console.log("in ShipBackBtn Handler: old scene key: " + this.oldSceneKey);
                 var oldScene = this.scene.manager.getScene(this.oldSceneKey);
                 console.log("manager sent back: " + oldScene.key);
@@ -446,6 +506,13 @@ GlobalFunctionsPlugin.prototype = {
 
 
             case "buyCanoe":
+                // use manager to get current scene and check if sleeping.
+                var callingScene = this.scene.manager.getScene(this.scene.key);
+                // nothing seems to keep scenes from getting input.. have to check in click handlers too!
+                if (callingScene.isSleepFlagSet()) {
+                    return;
+                }
+
 
                 if (this.sys.globalFunctions.validPurchase(canoe)) {
                     this.dialogBox.setText("Congrats you have saved only yourself!");
@@ -464,6 +531,13 @@ GlobalFunctionsPlugin.prototype = {
 
 
             case "buySchooner":
+                // use manager to get current scene and check if sleeping.
+                var callingScene = this.scene.manager.getScene(this.scene.key);
+                // nothing seems to keep scenes from getting input.. have to check in click handlers too!
+                if (callingScene.isSleepFlagSet()) {
+                    return;
+                }
+
 
                 if (this.sys.globalFunctions.validPurchase(schooner)) {
                     this.dialogBox.setText("you have bought a schooner, and actualy saved some other people then yourself!");
@@ -479,6 +553,13 @@ GlobalFunctionsPlugin.prototype = {
 
 
             case "buyTwoMaster":
+                // use manager to get current scene and check if sleeping.
+                var callingScene = this.scene.manager.getScene(this.scene.key);
+                // nothing seems to keep scenes from getting input.. have to check in click handlers too!
+                if (callingScene.isSleepFlagSet()) {
+                    return;
+                }
+
 
                 if (this.sys.globalFunctions.validPurchase(twoMaster)) {
                     this.dialogBox.setText("You bought a two master and saved a bunch of people!");
@@ -493,6 +574,13 @@ GlobalFunctionsPlugin.prototype = {
 
 
             case "buyFourMaster":
+                // use manager to get current scene and check if sleeping.
+                var callingScene = this.scene.manager.getScene(this.scene.key);
+                // nothing seems to keep scenes from getting input.. have to check in click handlers too!
+                if (callingScene.isSleepFlagSet()) {
+                    return;
+                }
+
 
                 if (this.sys.globalFunctions.validPurchase(fourMaster)) {
                     this.dialogBox.setText("You have saved all the people!");
@@ -507,6 +595,13 @@ GlobalFunctionsPlugin.prototype = {
 
 
             case "SailAway":
+                // use manager to get current scene and check if sleeping.
+                var callingScene = this.scene.manager.getScene(this.scene.key);
+                // nothing seems to keep scenes from getting input.. have to check in click handlers too!
+                if (callingScene.isSleepFlagSet()) {
+                    return;
+                }
+
                 // Sail away from island!
 
                 // first initialize cargo
@@ -684,7 +779,29 @@ GlobalFunctionsPlugin.prototype = {
                 // get manager to enable killing all the Shipwrecked scenes.
                 let manager = this.scene.manager;
 
-                // now remove them.
+                //var aScene = "";
+                //aScene = this.scene.manager.getScene("ShipConstruction");
+                //this.scene.manager.remove("ShipConstruction");
+                //aScene.destroy();
+
+                //aScene = this.scene.manager.getScene("Shipwreck");
+                //this.scene.manager.remove("Shipwreck");
+                //aScene.destroy();
+
+                //aScene = this.scene.manager.getScene("Shipwreck2");
+                //this.scene.manager.remove("Shipwreck2");
+                //aScene.destroy();
+
+                //aScene = this.scene.manager.getScene("Shipwreck3");
+                //this.scene.manager.remove("Shipwreck3");
+                //aScene.destroy();
+
+                //aScene = this.scene.manager.getScene("Shipwreck4");
+                //this.scene.manager.remove("Shipwreck4");
+                //aScene.destroy();
+
+
+                //// now remove them.
                 manager.remove("ShipConstruction");
                 manager.remove("Shipwreck");
                 manager.remove("Shipwreck2");
@@ -725,7 +842,9 @@ GlobalFunctionsPlugin.prototype = {
                 this.ThunderStormAudio3.stop();
 
                 // use manager to remove us.
+                var introScene = this.scene.manager.getScene("ShipwreckedIntro");
                 this.scene.manager.remove("ShipwreckedIntro");
+                //introScene.destroy();
 
                 // reset start and explode times so the player is not penalized for watching the intro screen!
                 timeLeft = explodeTime;
