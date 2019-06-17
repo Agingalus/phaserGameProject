@@ -502,7 +502,7 @@ GlobalFunctionsPlugin.prototype = {
 
 
                     if (this.sys.globalFunctions.validPurchase(canoe)) {
-                        this.dialogBox.setText("Congrats you have saved only yourself!");
+                        this.dialogBox.setText("Congrats you built a canoe and have saved only yourself!");
                         this.sys.globalFunctions.updateResourceDisplay();
 
                         playerShip = canoe;
@@ -527,7 +527,7 @@ GlobalFunctionsPlugin.prototype = {
 
 
                     if (this.sys.globalFunctions.validPurchase(schooner)) {
-                        this.dialogBox.setText("you have bought a schooner, and actualy saved some other people then yourself!");
+                        this.dialogBox.setText("you built a schooner, and actualy saved some people other than yourself!");
                         this.sys.globalFunctions.updateResourceDisplay();
 
                         playerShip = schooner;
@@ -549,7 +549,7 @@ GlobalFunctionsPlugin.prototype = {
 
 
                     if (this.sys.globalFunctions.validPurchase(twoMaster)) {
-                        this.dialogBox.setText("You bought a two master and saved a bunch of people!");
+                        this.dialogBox.setText("You built a Brig and saved a bunch of people!");
                         this.sys.globalFunctions.updateResourceDisplay();
 
                         playerShip = twoMaster;
@@ -570,7 +570,7 @@ GlobalFunctionsPlugin.prototype = {
 
 
                     if (this.sys.globalFunctions.validPurchase(fourMaster)) {
-                        this.dialogBox.setText("You have saved all the people!");
+                        this.dialogBox.setText("You built a Frigate and saved all the people!");
                         this.sys.globalFunctions.updateResourceDisplay();
 
                         playerShip = fourMaster;
@@ -600,45 +600,69 @@ GlobalFunctionsPlugin.prototype = {
 
                     let cargoSpace = playerShip.cargo;
                     // load cargo, gold first..
+
                     // gold:
-                    if (Gold > cargoSpace) {
-                        playerShip.gold = cargoSpace;
-                    } else {
-                        playerShip.gold = Gold;
-                        cargoSpace -= Gold;
-                    }
+                    if (cargoSpace > 0) {
+
+                        if (Gold > cargoSpace) {
+                            playerShip.gold = cargoSpace;
+                            cargoSpace = 0;
+                        } else {
+                            playerShip.gold = Gold;
+                            cargoSpace -= Gold;
+                        }
+                    } // end if cargo for gold
+
+
 
                     // Iron:
-                    if (Iron > cargoSpace) {
-                        playerShip.iron = cargoSpace;
-                    } else {
-                        playerShip.iron = Iron;
-                        cargoSpace -= Iron;
-                    }
+                    if (cargoSpace > 0) {
+
+                        if (Iron > cargoSpace) {
+                            playerShip.iron = cargoSpace;
+                            cargoSpace = 0;
+                        } else {
+                            playerShip.iron = Iron;
+                            cargoSpace -= Iron;
+                        }
+                    }// end if cargo for Iron
+
 
                     // Wool:
-                    if (Wool > cargoSpace) {
-                        playerShip.wool = cargoSpace;
-                    } else {
-                        playerShip.wool = Wool;
-                        cargoSpace -= Wool;
-                    }
+                    if (cargoSpace > 0) {
+
+                        if (Wool > cargoSpace) {
+                            playerShip.wool = cargoSpace;
+                            cargoSpace = 0;
+                        } else {
+                            playerShip.wool = Wool;
+                            cargoSpace -= Wool;
+                        }
+                    }// end if cargo for Wool
 
                     // Wood:
-                    if (Wood > cargoSpace) {
-                        playerShip.wood = cargoSpace;
-                    } else {
-                        playerShip.wood = Wood;
-                        cargoSpace -= Wood;
-                    }
+                    if (cargoSpace > 0) {
+
+                        if (Wood > cargoSpace) {
+                            playerShip.wood = cargoSpace;
+                            cargoSpace = 0;
+                        } else {
+                            playerShip.wood = Wood;
+                            cargoSpace -= Wood;
+                        }
+                    }// end if cargo for wood
 
                     // Food:
-                    if (Food > cargoSpace) {
-                        playerShip.food = cargoSpace;
-                    } else {
-                        playerShip.food = Food;
-                        cargoSpace -= Food;
-                    }
+                    if (cargoSpace > 0) {
+
+                        if (Food > cargoSpace) {
+                            playerShip.food = cargoSpace;
+                            cargoSpace = 0;
+                        } else {
+                            playerShip.food = Food;
+                            cargoSpace -= Food;
+                        }
+                    }// end if cargo for food
 
                     // everything loaded that can be.  zero out the globals.
                     Gold = 0;
